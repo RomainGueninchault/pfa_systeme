@@ -1,0 +1,1 @@
+Ce dépôt contient un système permettant d'installer des exercices d'entrainement à la programmation.
