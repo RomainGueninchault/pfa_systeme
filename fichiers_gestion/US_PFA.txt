@@ -1,0 +1,436 @@
+# User Stories - Système d'Entraînement aux Exercices de Programmation
+
+## Epic 1 : Infrastructure de Base
+
+### US1.1 - Installation de la base d'exercices
+En tant qu' étudiant  
+Je veux installer facilement une base d'exercices  
+Afin de commencer à m'entraîner sans configuration complexe
+
+Critères d'acceptation :
+- La commande "trainer install exs" télécharge et configure la base d'exercices
+- Un message de confirmation s'affiche après l'installation
+- La structure des répertoires est créée correctement
+- Les dépendances nécessaires sont vérifiées
+
+Priorité : Haute  
+Difficulté estimée : 5 points
+
+---
+
+### US1.2 - Ajout d'un exercice au répertoire de travail
+En tant qu' étudiant  
+Je veux copier un exercice dans mon répertoire de travail  
+Afin de commencer à le résoudre
+
+Critères d'acceptation :
+- La commande "trainer add ex dir" copie l'exercice dans le répertoire spécifié
+- Le répertoire doit être vide au départ (vérification)
+- Les fichiers yaml de métadonnées sont copiés correctement
+- Un message d'erreur clair si le répertoire n'est pas vide
+
+Priorité : Haute  
+Difficulté estimée : 3 points
+
+---
+
+### US1.3 - Nettoyage du répertoire de travail
+En tant qu' étudiant  
+Je veux nettoyer mon répertoire de travail  
+Afin de repartir sur un nouvel exercice proprement
+
+Critères d'acceptation :
+- La commande "trainer clean dir" supprime tous les fichiers du répertoire
+- Une confirmation est demandée avant suppression
+- Le répertoire reste existant mais vide
+- Les fichiers en dehors du répertoire ne sont pas affectés
+
+Priorité : Moyenne  
+Difficulté estimée : 2 points
+
+---
+
+## Epic 2 : Consultation et Navigation
+
+### US2.1 - Lister les exercices disponibles
+En tant qu' étudiant  
+Je veux voir la liste des exercices disponibles  
+Afin de choisir sur quoi m'entraîner
+
+Critères d'acceptation :
+- La commande "trainer ls" affiche tous les exercices
+- L'affichage est lisible et organisé (colonnes, couleurs)
+- Les informations essentielles sont visibles (nom, difficulté, langue)
+- La sortie est paginée si trop d'exercices
+
+Priorité : Haute  
+Difficulté estimée : 3 points
+
+---
+
+### US2.2 - Voir l'aide des commandes
+En tant qu' utilisateur  
+Je veux voir la liste des commandes disponibles  
+Afin de savoir comment utiliser le système
+
+Critères d'acceptation :
+- La commande "trainer" sans argument affiche l'aide
+- Toutes les commandes sont documentées avec leur syntaxe
+- Des exemples d'utilisation sont fournis
+- L'aide est claire et concise
+
+Priorité : Haute  
+Difficulté estimée : 2 points
+
+---
+
+## Epic 3 : Exécution et Évaluation
+
+### US3.1 - Compiler un exercice
+En tant qu' étudiant  
+Je veux compiler mon code  
+Afin de vérifier qu'il ne contient pas d'erreurs de syntaxe
+
+Critères d'acceptation :
+- La compilation utilise les paramètres définis dans le yaml
+- Les erreurs de compilation sont affichées clairement
+- Le binaire compilé est placé dans un répertoire approprié
+- Les warnings sont affichés mais ne bloquent pas
+
+Priorité : Haute  
+Difficulté estimée : 5 points
+
+---
+
+### US3.2 - Exécuter et tester un exercice
+En tant qu' étudiant  
+Je veux exécuter mon code et voir si les tests passent  
+Afin de vérifier que ma solution est correcte
+
+Critères d'acceptation :
+- La commande "trainer execute" compile, exécute et teste
+- Les résultats des tests sont affichés (réussis/échoués)
+- Un résumé clair indique si l'exercice est validé
+- Les détails des tests échoués sont disponibles
+
+Priorité : Haute  
+Difficulté estimée : 8 points
+
+---
+
+### US3.3 - Vérifier le timeout d'exécution
+En tant que système  
+Je veux lancer un message d'alerte lorsque le temps de resolution est dépassé
+Afin de donner à l'utilisateur un point de repère
+
+Critères d'acceptation :
+- Le timeout est défini dans le fichier yaml pour chaque exercice
+- Un avertissement s'affiche si ce temps est dépassé (ex: "Temps recommandé dépassé : 15 min écoulées")
+- L'étudiant peut choisir de continuer malgré l'avertissement
+- Un message clair indique que le timeout a été atteint
+
+Priorité : Moyenne  
+Difficulté estimée : 3 points
+
+---
+
+## Epic 4 : Système de Métadonnées
+
+### US4.1 - Définir les métadonnées d'un exercice
+En tant que créateur d'exercice  
+Je veux définir les métadonnées dans un fichier yaml  
+Afin que le système puisse compiler et tester automatiquement
+
+Critères d'acceptation :
+- Le fichier yaml contient : langage, commande de compilation, tests, timeout
+- Le format yaml est validé au chargement
+- Des valeurs par défaut existent pour les champs optionnels
+- Un exemple de yaml est fourni comme template
+
+Priorité : Haute  
+Difficulté estimée : 5 points
+
+---
+
+### US4.2 - Organiser les exercices par langage
+En tant qu' administrateur de la base  
+Je veux organiser les exercices dans des sous-répertoires par langage  
+Afin de maintenir une structure claire
+
+Critères d'acceptation :
+- Structure : "/exercices/c/", "/exercices/java/", etc.
+- Le système détecte automatiquement le langage
+- La commande "ls" peut filtrer par langage
+- L'ajout d'un nouveau langage est simple
+
+Priorité : Moyenne  
+Difficulté estimée : 3 points
+
+---
+
+### US4.3 - Définir et valider les tags standardisés
+En tant que créateur d'exercice
+Je veux utiliser des tags standardisés définis centralement
+Afin de garantir la cohérence entre tous les exercices
+
+Critères d'acceptation :
+- Un fichier schema/tags.yaml définit tous les tags autorisés
+- Le système valide les tags lors du chargement d'un exercice
+- Un message d'erreur clair indique les tags invalides
+- Une commande trainer tags liste tous les tags disponibles
+- La documentation explique comment proposer de nouveaux tags
+
+Priorité : Moyenne
+Estimation : 3 points
+
+---
+
+## Epic 5 : Tests Automatiques
+
+### US5.1 - Exécuter des tests manuels simples
+En tant que système  
+Je veux exécuter des tests écrits à la main  
+Afin de valider les exercices simples (min, max)
+
+Critères d'acceptation :
+- Les tests sont définis dans le yaml ou un fichier séparé
+- Format : entrée → sortie attendue
+- Comparaison exacte de la sortie
+- Affichage des différences en cas d'échec
+
+Priorité : Haute  
+Difficulté estimée : 5 points
+
+---
+
+### US5.2 - Intégrer la bibliothèque Grader
+En tant que développeur du système  
+Je veux utiliser la lib Grader de M. Morandat  
+Afin d' automatiser la génération et l'exécution des tests
+
+Critères d'acceptation :
+- La lib Grader est intégrée au système
+- Elle est utilisée pour les exercices C
+- La documentation d'utilisation est fournie
+- Les tests générés sont reproductibles
+
+Priorité : Moyenne  
+Difficulté estimée : 8 points
+
+---
+
+### US5.3 - Comparer avec une solution de référence
+En tant que système  
+Je veux comparer la sortie du code étudiant avec une solution de référence  
+Afin de valider automatiquement les réponses des exercices plus complexes
+
+Critères d'acceptation :
+- La solution de référence est stockée avec l'exercice
+- Elle est compilée et exécutée avec les mêmes entrées
+- Les sorties sont comparées automatiquement
+- Les différences sont affichées clairement
+
+Priorité : Haute  
+Difficulté estimée : 5 points
+
+---
+
+## Epic 6 : Mesure du Temps de Résolution
+
+### US6.1 - Enregistrer le temps de résolution
+En tant qu' étudiant  
+Je veux que mon temps de résolution soit enregistré  
+Afin de suivre ma progression
+
+Critères d'acceptation :
+- Le temps démarre quand l'exercice est ajouté avec "add"
+- Le temps s'arrête quand tous les tests passent
+- Le temps est sauvegardé localement
+- Le temps est affiché à la fin de l'exercice
+
+Priorité : Moyenne  
+Difficulté estimée : 5 points
+
+---
+
+### US6.2 - Consulter l'historique des temps
+En tant qu' étudiant  
+Je veux voir mes temps de résolution passés  
+Afin de mesurer mes progrès
+
+Critères d'acceptation :
+- Une commande affiche l'historique (ex: "trainer stats")
+- Les temps sont groupés par exercice
+- La date et l'heure sont enregistrées
+- Un graphique ou tableau récapitulatif est disponible
+
+Priorité : Basse  
+Difficulté estimée : 3 points
+
+---
+
+## Epic 7 : Extensions Futures
+
+### US7.1 - Filtrer les exercices par tags
+En tant qu' étudiant  
+Je veux filtrer les exercices par tags (difficulté, type)  
+Afin de trouver rapidement ce qui m'intéresse
+
+Critères d'acceptation :
+- Commande : "trainer ls --tag=recursion --difficulty=medium"
+- Les tags sont définis dans le yaml
+- Plusieurs tags peuvent être combinés
+- Les tags sont suggérés lors de la saisie
+
+Priorité : Basse (Phase 2)  
+Difficulté estimée : 5 points
+
+---
+
+### US7.2 - Adapter la difficulté avec LLM
+En tant qu' étudiant avancé  
+Je veux que le système me propose des variantes plus difficiles  
+Afin de continuer à progresser
+
+Critères d'acceptation :
+- Un LLM analyse le niveau de l'étudiant
+- Des variantes d'exercices sont générées automatiquement
+- La difficulté est calibrée selon les performances
+- L'étudiant peut accepter ou refuser les suggestions
+
+Priorité : Basse (Phase 3)  
+Difficulté estimée : 13 points
+
+---
+
+### US7.3 - Générer des tags automatiquement avec LLM
+En tant que créateur d'exercice  
+Je veux que les tags soient générés automatiquement  
+Afin de ne pas avoir à les définir manuellement
+
+Critères d'acceptation :
+- Un LLM analyse le code et l'énoncé
+- Il propose des tags pertinents (concepts, difficulté)
+- Les tags peuvent être validés/modifiés manuellement
+- Les tags sont stockés dans le yaml
+
+Priorité : Basse (Phase 3)  
+Difficulté estimée : 8 points
+
+---
+
+### US7.4 - Support du langage Java
+En tant qu' étudiant en Java  
+Je veux utiliser le système pour des exercices Java  
+Afin de m'entraîner dans ce langage
+
+Critères d'acceptation :
+- Le système détecte et compile du Java
+- Les tests fonctionnent avec Java
+- La structure est similaire au C
+- Un répertoire "/exercices/java/" existe
+
+Priorité : Basse (Phase 2)  
+Difficulté estimée : 8 points
+
+---
+
+### US7.5 - Automatiser l'écriture de tests
+En tant que créateur d'exercice  
+Je veux générer automatiquement des tests  
+Afin de gagner du temps sur les exercices complexes
+
+Critères d'acceptation :
+- Utilisation de libs spécialisées (Grader pour C)
+- Génération de cas limites automatiquement
+- Génération de tests aléatoires pertinents
+- Vérification de la couverture de code
+
+Priorité : Basse (Phase 2)  
+Difficulté estimée : 13 points
+
+---
+
+## Epic 8 : Qualité et Robustesse
+
+### US8.1 - Validation du contrat de métadonnées
+En tant que développeur du système  
+Je veux valider le format des fichiers yaml  
+Afin d' éviter les erreurs d'intégration
+
+Critères d'acceptation :
+- Un schéma de validation yaml existe
+- Les erreurs de format sont détectées au chargement
+- Des messages d'erreur clairs indiquent le problème
+- Un outil de validation est disponible ("trainer validate")
+
+Priorité : Moyenne  
+Difficulté estimée : 3 points
+
+---
+
+### US8.2 - Gestion des erreurs robuste
+En tant qu' utilisateur  
+Je veux recevoir des messages d'erreur clairs  
+Afin de comprendre ce qui ne va pas
+
+Critères d'acceptation :
+- Toutes les erreurs ont un message explicite
+- Les codes de retour sont cohérents
+- Les traces d'erreur sont optionnelles (mode verbose)
+- Les erreurs ne cassent pas le système
+
+Priorité : Haute  
+Difficulté estimée : 5 points
+
+---
+
+### US8.3 - Tests unitaires du système
+En tant que développeur du système  
+Je veux avoir une suite de tests automatisés  
+Afin de garantir la stabilité
+
+Critères d'acceptation :
+- Couverture de code > 80%
+- Tests d'intégration pour chaque commande
+- CI/CD configuré (GitHub Actions ou équivalent)
+- Tests sur plusieurs versions de Python
+
+Priorité : Moyenne  
+Difficulté estimée : 8 points
+
+---
+
+## Epic 9 : Documentation et Onboarding
+
+### US9.1 - Documentation utilisateur complète
+En tant que nouvel utilisateur  
+Je veux avoir une documentation claire  
+Afin de démarrer rapidement
+
+Critères d'acceptation :
+- Guide de démarrage rapide (README)
+- Documentation de toutes les commandes
+- Exemples d'utilisation
+- FAQ pour les problèmes courants
+
+Priorité : Haute  
+Difficulté estimée : 5 points
+
+---
+
+### US9.2 - Documentation pour créateurs d'exercices
+En tant que créateur d'exercice  
+Je veux savoir comment ajouter un exercice  
+Afin de contribuer à la base
+
+Critères d'acceptation :
+- Template d'exercice fourni
+- Documentation du format yaml complet
+- Guide des bonnes pratiques
+- Exemples d'exercices commentés
+
+Priorité : Moyenne  
+Difficulté estimée : 5 points
+
+---
