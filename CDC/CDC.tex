@@ -1,0 +1,255 @@
+\documentclass{article}
+% Encodage et langue
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+
+% Mathématiques
+\usepackage{amsmath, amssymb}
+
+% Mise en page
+\usepackage[a4paper, height=22cm ,width=13.5cm]{geometry}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{float}
+% Graphiques et dessins
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{backgrounds}
+
+% Encadrés et couleurs
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+
+% Algorithmes
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+
+% Listings (code source)
+\usepackage{listings}
+
+% En-têtes/pieds de page
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+
+% Hyperliens
+\usepackage[colorlinks=true, linkcolor=black, citecolor=black, urlcolor=black]{hyperref}
+
+
+% Pour arrière-plan avec TikZ
+\usepackage{eso-pic}
+
+\usepackage{graphicx}
+
+\begin{document}
+
+% Première page : uniquement l'arrière-plan
+\AddToShipoutPictureBG*{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[opacity=1, inner sep=0pt] at (current page.center) {
+      \includegraphics[width=\paperwidth,height=\paperheight]{img/poster.png}};
+  \end{tikzpicture}}
+\null  % Page vide avec l'arrière-plan
+\thispagestyle{empty}
+\newpage
+
+% Deuxième page : page de titre
+\begin{titlepage}
+\begin{center}
+
+% Logos en haut
+\vspace*{0.5cm}
+\begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.4\linewidth]{img/enseirb.png}
+\end{minipage}%
+\hfill
+\begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.4\linewidth]{img/logo.png}
+\end{minipage}
+
+\vspace{1.5cm}
+
+% Titre
+\rule{\textwidth}{1pt}
+\vspace{0.6cm}
+
+{\Huge \textbf{Entrainement à la programmation}}\\[0.4cm]
+{\Large Cahier des charges du PFA}
+
+\vspace{0.6cm}
+\rule{\textwidth}{1pt}
+
+\vspace{2cm}
+
+% Auteurs
+{\large \textbf{Auteurs}}\\[0.3cm]
+{\normalsize
+Romain \textsc{GUENINCHAULT} \\
+Youness \textsc{BAMOUSS} \\
+Mohamed Amine \textsc{BENKADUR} \\
+Arthur \textsc{PIERRE}}\\[1cm]
+
+% Encadrant
+{\large \textbf{Encadrant}}\\[0.3cm]
+{\normalsize Julien \textsc{ALLALI}}
+
+\vfill
+
+% Informations complémentaires
+{\large Département Informatique\\
+ENSEIRB-MATMECA -- Bordeaux INP\\[0.3cm]
+Année universitaire 2025--2026}
+
+\end{center}
+\end{titlepage}
+
+% Table des matières
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+L’objectif de ce projet est de développer un système permettant à l’utilisateur de s’entraîner à la programmation directement sur son environnement. Il proposera des exercices progressifs et interactifs, avec des retours sur les solutions afin de faciliter l’apprentissage et le suivi des progrès.
+
+\section{Problématique}
+
+L’entraînement à la programmation représente aujourd’hui une difficulté importante, en particulier pour les étudiants. La méthode la plus courante consiste à écrire une solution, la compiler, puis vérifier manuellement son fonctionnement en exécutant quelques tests préparés à l’avance. Cette approche est souvent longue, répétitive et source d’erreurs, notamment lorsqu’il faut imaginer soi-même des cas de test pertinents et interpréter les résultats sans retour clair sur les points à améliorer.
+
+
+\section{Objectif du projet}
+
+\subsection{Objectifs primaires}
+
+Le but de notre système est de faciliter cette tâche à travers la mise à disposition de dépôts d’exercices couvrant les principales notions du langage C dans un premier temps (avec la possibilité d’étendre ensuite à d’autres langages). Ces exercices seront adaptés à tous les niveaux, et la plateforme accompagnera l’utilisateur dans leur résolution en proposant une correction de référence, ainsi qu’une analyse des erreurs présentes dans la solution soumise, en mettant notamment en évidence les cas limites et les points à améliorer.
+
+\subsection{Objectifs secondaires}
+
+Le système analysera le temps nécessaire à l’utilisateur pour implémenter sa solution et collectera des informations sur son niveau de progression. À partir de ces données, il pourra ensuite proposer automatiquement des exercices adaptés à son profil, afin d’assurer un apprentissage progressif et personnalisé.
+
+\subsection{Hors périmètre}
+
+L’utilisateur aura librement accès aux outils d’IA et à la documentation disponible sur Internet. Le système n’a pas vocation à reproduire des conditions d’examen : il ne cherchera donc pas à détecter une éventuelle “triche”, et l’apprentissage reposera principalement sur la bonne foi et la motivation de l’utilisateur. 
+
+\section{Fonctionnalités attendues}
+
+Afin de réaliser le système, nous prévoyons d’implémenter les fonctionnalités suivantes :
+
+\begin{itemize}
+    \item \textbf{F1 : Initialisation de la base d’exercices} \verb|(Must)| \\
+    Mise en place (clonage / installation) du dépôt d’exercices sur la machine de l’utilisateur.\\
+
+    \item \textbf{F2 : Liste des exercices disponibles} \verb|(Must)|\\
+    Affichage clair et lisible des exercices (colonnes, couleurs, filtrage éventuel : difficulté, thème, etc.).\\
+
+    \item \textbf{F3 : Gestion du répertoire de travail} \verb|(Must)|\\
+    Ajout d’un exercice dans un répertoire personnel de travail, avec possibilité de nettoyage/réinitialisation de ce répertoire.\\
+
+    \item \textbf{F4 : Exécution de tests manuels simples} \verb|(Must)|\\
+    Lancement de tests permettant de comparer automatiquement la sortie obtenue avec la sortie attendue.\\
+
+    \item \textbf{F7 : Gestion des \textit{timeout}} \verb|(Should)|\\
+    Définition de limites de temps d’exécution pour éviter les blocages liés aux boucles infinies ou aux programmes trop lents.\\
+
+    \item \textbf{F5 : Mesure du temps de résolution} \verb|(Should)|\\
+    Calcul du temps pris par l’utilisateur entre le début et la fin de l’implémentation.\\
+
+    \item \textbf{F6 : Recommandation d’exercices adaptés} \verb|(Could)|\\
+    Proposition d’exercices en fonction du niveau estimé de l’utilisateur (progression, réussite, temps, difficultés).\\
+
+\end{itemize}
+
+\section{Contraintes}
+
+\subsection{Contraintes fonctionnelles}
+
+\begin{itemize}
+    \item \textbf{CF1 : Exécution locale des solutions} \\
+    Les exercices doivent être résolus et testés localement sur la machine de l’utilisateur, sans dépendre d’une infrastructure distante obligatoire. \\
+
+    \item \textbf{CF2 : Structure standardisée des exercices} \\
+    Chaque exercice devra respecter une organisation commune (énoncé, fichier(s) de travail, tests, métadonnées), afin d’assurer un fonctionnement homogène du système.\\
+
+    \item \textbf{CF3 : Gestion d’un répertoire de travail isolé} \\
+    Le système doit éviter de modifier directement le dépôt d’exercices et créer un espace de travail séparé pour l’utilisateur.\\
+
+    \item \textbf{CF4 : Résultats de tests clairs et exploitables} \\
+    Lors de l’exécution des tests, le système doit fournir un retour lisible (succès/échec), et afficher les écarts entre sortie obtenue et sortie attendue.\\
+
+    \item \textbf{CF5 : Support initial du langage C} \\
+    Le langage C est prioritaire pour la première version. La conception devra néanmoins rester extensible pour permettre l’ajout futur d’autres langages.\\
+
+    \item \textbf{CF6 : Mesure cohérente du temps} \\
+    Le temps de résolution doit être mesuré de manière fiable (début/fin) et sauvegardé pour permettre un suivi et une éventuelle recommandation.\\
+\end{itemize}
+
+\subsection{Contraintes non fonctionnelles}
+
+\begin{itemize}
+    \item \textbf{CNF1 : Portabilité} \\
+    Le système devra fonctionner sur un environnement Linux standard. Une compatibilité macOS/Windows pourra être envisagée selon le temps disponible.\\
+
+    \item \textbf{CNF2 : Simplicité 
+    d’installation et d’utilisation} \\
+    L’outil devra être simple à installer (une commande ou un script) et facilement utilisable via une interface en ligne de commande.\\
+
+    \item \textbf{CNF3 : Robustesse} \\
+    Le système doit gérer proprement les erreurs courantes : compilation impossible, fichier manquant, mauvaise configuration, timeout, etc.\\
+
+    \item \textbf{CNF4 : Sécurité minimale} \\
+    Les programmes exécutés appartenant à l’utilisateur, le système ne peut pas garantir une sécurité totale, mais doit limiter les risques évidents (timeouts, exécution contrôlée, pas de suppression de fichiers système).\\
+
+    \item \textbf{CNF5 : Performance} \\
+    L’exécution des tests doit rester rapide afin de permettre un entraînement fluide. Un retour doit être fourni en quelques secondes pour les exercices simples.
+
+    \item \textbf{CNF6 : Extensibilité} \\
+    L’architecture doit permettre d’ajouter facilement de nouveaux exercices, de nouveaux tests, et éventuellement de nouveaux langages sans devoir réécrire le système.\\
+
+    \item \textbf{CNF7 : Lisibilité des retours} \\
+    Les messages affichés à l’utilisateur doivent être compréhensibles, structurés et exploitables (couleurs, résumé, détails optionnels).\\
+\end{itemize}
+
+\section{Organisation des exercices}
+
+\begin{itemize}
+    \item Un exercice est stocké dans un répertoire dédié et respecte une structure commune
+    \item Chaque exercice contient un énoncé, un ou plusieurs fichiers de travail, des tests, et des métadonnées
+    \item Le système doit pouvoir ajouter facilement un nouvel exercice en respectant cette structure
+\end{itemize}
+
+\subsection{Structure minimale d’un exercice}
+
+\begin{verbatim}
+exo_nom/
+ ├── README.md
+ ├── src/
+ │   └── main.c
+ ├── tests/
+     ├── input1.txt
+     ├── output1.txt
+     └── ...
+ 
+\end{verbatim}
+
+\subsection{Métadonnées attendues}
+
+\begin{itemize}
+    \item Identifiant unique de l’exercice
+    \item Langage (C initialement)
+    \item Niveau estimé (débutant, intermédiaire, avancé)
+    \item Notions (boucles, tableaux, pointeurs, etc.)
+    \item Temps estimé de résolution
+\end{itemize}
+
+\section{Livrables}
+
+\section{Critères de validation}
+
+\section{Planning prévisionnel}
+
+\section{Risques et limites}
+
+\end{document}
