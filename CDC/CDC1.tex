@@ -1,0 +1,138 @@
+% !TEX program = pdflatex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{booktabs}
+
+\title{Cahier des Charges\\Système d'entraînement à la programmation}
+\author{%
+  \textit{Arthur PIERRE}\\
+  \textit{Younes BAMOUSS}\\
+  \textit{Romain GUENINCHAULT}\\
+  \textit{Mohamed Amine BENKADUR}\\
+  \textit{Enseirb-Matmeca Informatique}
+}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Ce document décrit le cahier des charges d'un système d'entraînement à la programmation
+fonctionnant sur un environnement Linux standard et développé en Python. Les exercices sont
+distribués sous forme de dépôts Git. Le système doit permettre de récupérer et maintenir à jour
+les exercices, de lancer des sessions de résolution, d'évaluer automatiquement les solutions
+(compilation/exécution/tests), de gérer une durée recommandée, d'historiser les résultats et de
+proposer un parcours adapté au niveau de l'utilisateur. Une extension optionnelle prévoit
+l'usage d'un LLM pour l'annotation des exercices et l'assistance à l'intégration de nouveaux contenus.
+\end{abstract}
+
+\section{Présentation du projet}
+
+\subsection{Contexte}
+\textbf{Domaine.} L'objectif de ce projet est le développement d'un système permettant de s'entraîner à la programmation sur une environnement.  Les exercices de programmation sont sur des dépôts Git separer. Le système doit permettre à récupérer des exercices via leur URL et ensuite de les faire en evaluant l'utilisateur. Le système vérifie que l'exercice est fait dans le temps imparti et valide la solution. Parmi les problématiques, une question est de choisir un ensemble d'exercices en fonction du niveau de l'utilisateur ainsi de proposer un parcours adapté à son niveau. Une piste serait d'utiliser un LLM pour annoter les exercices et également pour gérer de nouveaux exercices. l'autre probleme dans le cas des exercices type exam ou on a une dependance des fonctions implementer une piste est d'utiliser la bibliotique Grader.
+
+\subsection{Objectifs}
+\textbf{Objectifs.} Le rendu doit consister en un systeme permettant de s'entraîner à la programmation :
+charger des dépôts d'exercices, lancer un exercice, évaluer la solution... Le rendu doit également consister en des dépôts d'exercices avec des proprtietes bien definis.
+
+\medskip
+Les fonctionnalités attendues sont :
+\begin{itemize}[itemsep=0.2em]
+  \item programme permettant de récupérer et mettre à jour des dépôts,
+  \item programme permettant de lister les exercices,
+  \item programme permettant de lancer un exercice, une session,
+  \item gestion de la durée d'un exercice,
+  \item suivi d'évolution des résultats,
+  \item déterminer le ``niveau'' de l'utilisateur,
+  \item proposer une évolution pertinente de la difficulté.
+\end{itemize}
+
+\subsection{Description de l'existant}
+\textbf{Environnement logiciel :}
+\begin{itemize}
+\item OS : Linux
+\item langage de developement : Python,
+\item outils externes : Git, compilateurs/interpréteurs selon langages (ex. GCC pour C, python3 pour python,..), automatisation (makefile ou cmake,...).
+\end{itemize}
+
+\subsection{Critères d'acceptabilité du produit}
+\subsubsection*{Procédure de validation}
+
+\subsubsection*{Critères d'acceptation}
+\section{Expression des besoins}
+
+\subsection{Besoins fonctionnels}
+
+\subsection{Besoins non fonctionnels}
+
+\section{Contraintes}
+
+\subsection{Coûts}
+\begin{itemize}
+  \item \textbf{Budget alloué :} 0 euro.
+  \item \textbf{Moyens matériels et logiciels :}
+    \begin{itemize}
+      \item Des machines linux personelles.
+        \textcolor{red}{à ajouter des trucs}
+    \end{itemize}
+  \item \textbf{Coûts potentiels additionnels :}
+\end{itemize}
+
+\subsection{Délais}
+\begin{itemize}
+  \item \textbf{Date de livraison :} \textit{13/05/2026}.
+  \item \textbf{Échéances intermédiaires :}
+\end{itemize}
+
+\subsection{Autres contraintes}
+
+\section{Déroulement du projet}
+\subsection{Planification}
+Le projet est organisé en jalons datés, avec livraisons partielles et démonstrations.
+
+\begin{longtable}{p{3.2cm}p{11.8cm}}
+\toprule
+\textbf{Date} & \textbf{Jalon / livrable} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Date} & \textbf{Jalon / livrable} \\
+\midrule
+\endhead
+
+14 janvier & Réunion de cadrage avec le client et/ou le responsable pédagogique : clarification des objectifs, périmètre, contraintes, critères d'acceptation. \\
+28 janvier & Livraison du cahier des charges (version 1). \\
+04 février & Validation et/ou révision du cahier des charges ; livraison partielle V0 (\og Hello World \fg) : dépôt \texttt{trainer} initialisé, commande \texttt{trainer} fonctionnelle (aide), structure minimale du dépôt d'exercices. \\
+25 février & Livraison partielle V1 / démonstration : \texttt{trainer install}, \texttt{trainer ls}, import d'un exercice (\texttt{trainer add}) sur un exemple C minimal. \\
+01 mars & Livraison partielle V2 / démonstration : \texttt{trainer execute} (compilation + exécution + premiers tests simples), prise en compte du timeout défini dans le YAML, rapport de verdict. \\
+22 avril & Livraison partielle V3 / démonstration : intégration Grader (C) ou automatisation avancée des tests, persistance des résultats (temps, succès/échecs), premiers éléments d'évaluation du niveau et recommandations. \\
+13 mai & Livraison finale : code + documentation + dépôts d'exercices ; démonstration complète et présentation orale ; bilan devant le(s) client(s) et le responsable pédagogique. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Plan d'assurance qualité}
+Procédures adoptées pour contrôler la qualité :
+\begin{itemize}
+  \item \textbf{Tests unitaires}
+  \item \textbf{Tests d'intégration}
+\end{itemize}
+
+\subsection{Documentation}
+\textcolor{red}{plus tard?}
+
+\subsection{Responsabilités}
+
+\subsubsection{Maîtrise d'ouvrage}
+\subsubsection{Maîtrise d'oeuvre}
+\end{document}
