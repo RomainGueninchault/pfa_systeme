@@ -136,81 +136,122 @@ L’utilisateur aura librement accès aux outils d’IA et à la documentation d
 
 \section{Fonctionnalités attendues}
 
-Afin de réaliser le système, nous prévoyons d’implémenter les fonctionnalités suivantes :
+%Afin de réaliser le système, nous prévoyons d’implémenter les fonctionnalités suivantes :
 
-\begin{itemize}
-    \item \textbf{F1 : Initialisation de la base d’exercices} \verb|(Must)| \\
-    Mise en place (clonage / installation) du dépôt d’exercices sur la machine de l’utilisateur.\\
+% \begin{itemize}
+%     \item \textbf{F1 : Initialisation de la base d’exercices} \verb|(Must)| \\
+%     Mise en place (clonage / installation) du dépôt d’exercices sur la machine de l’utilisateur.\\
 
-    \item \textbf{F2 : Liste des exercices disponibles} \verb|(Must)|\\
-    Affichage clair et lisible des exercices (colonnes, couleurs, filtrage éventuel : difficulté, thème, etc.).\\
+%     \item \textbf{F2 : Liste des exercices disponibles} \verb|(Must)|\\
+%     Affichage clair et lisible des exercices (colonnes, couleurs, filtrage éventuel : difficulté, thème, etc.).\\
 
-    \item \textbf{F3 : Gestion du répertoire de travail} \verb|(Must)|\\
-    Ajout d’un exercice dans un répertoire personnel de travail, avec possibilité de nettoyage/réinitialisation de ce répertoire.\\
+%     \item \textbf{F3 : Gestion du répertoire de travail} \verb|(Must)|\\
+%     Ajout d’un exercice dans un répertoire personnel de travail, avec possibilité de nettoyage/réinitialisation de ce répertoire.\\
 
-    \item \textbf{F4 : Exécution de tests manuels simples} \verb|(Must)|\\
-    Lancement de tests permettant de comparer automatiquement la sortie obtenue avec la sortie attendue.\\
+%     \item \textbf{F4 : Exécution de tests manuels simples} \verb|(Must)|\\
+%     Lancement de tests permettant de comparer automatiquement la sortie obtenue avec la sortie attendue.\\
 
-    \item \textbf{F7 : Gestion des \textit{timeout}} \verb|(Should)|\\
-    Définition de limites de temps d’exécution pour éviter les blocages liés aux boucles infinies ou aux programmes trop lents.\\
+%     \item \textbf{F7 : Gestion des \textit{timeout}} \verb|(Should)|\\
+%     Définition de limites de temps d’exécution pour éviter les blocages liés aux boucles infinies ou aux programmes trop lents.\\
 
-    \item \textbf{F5 : Mesure du temps de résolution} \verb|(Should)|\\
-    Calcul du temps pris par l’utilisateur entre le début et la fin de l’implémentation.\\
+%     \item \textbf{F5 : Mesure du temps de résolution} \verb|(Should)|\\
+%     Calcul du temps pris par l’utilisateur entre le début et la fin de l’implémentation.\\
 
-    \item \textbf{F6 : Recommandation d’exercices adaptés} \verb|(Could)|\\
-    Proposition d’exercices en fonction du niveau estimé de l’utilisateur (progression, réussite, temps, difficultés).\\
+%     \item \textbf{F6 : Recommandation d’exercices adaptés} \verb|(Could)|\\
+%     Proposition d’exercices en fonction du niveau estimé de l’utilisateur (progression, réussite, temps, difficultés).\\
 
-\end{itemize}
+% \end{itemize}
+
+Le système a pour objectif de fournir un environnement complet permettant à un utilisateur de s'entraîner à la programmation de manière autonome et progressive. Il repose sur une interface en ligne de commande offrant un ensemble de fonctionnalités destinées à faciliter la consultation, la résolution et l'évaluation d'exercices de programmation.
+
+L'utilisateur peut consulter la liste des exercices disponibles à tout moment. Cette liste présente les informations essentielles telles que le nom de l'exercice, le langage utilisé et le niveau de difficulté estimé. L'affichage est conçu pour rester lisible, même en présence d'un grand nombre d'exercices, grâce à une organisation en colonnes structurée, à l'utilisation de couleurs pour faciliter la lecture et, si nécessaire, à des mécanismes de filtrage par difficulté, thème ou langage. Une pagination peut également être mise en place pour éviter la saturation visuelle.
+
+Le système permet l'installation et la gestion locale d'une base d'exercices. Une fois installée, cette base peut être exploitée sans dépendre d'une infrastructure distante. L'utilisateur peut sélectionner un exercice et l'ajouter à un répertoire de travail personnel, distinct du dépôt d'origine, afin de préserver l'intégrité de la base d'exercices. Le système vérifie alors que l'environnement de travail est valide et prêt à être utilisé.
+
+Une fois l'exercice ajouté, l'utilisateur peut compiler son code directement depuis l'outil. La compilation utilise les paramètres définis dans les métadonnées de l'exercice et affiche de manière claire les erreurs et avertissements éventuels. Lorsque la compilation réussit, le système permet l'exécution automatique des tests associés à l'exercice.
+
+Les tests sont exécutés localement et comparent la sortie du programme de l'utilisateur avec les résultats attendus ou avec une solution de référence. Le système fournit un retour détaillé indiquant les tests réussis et échoués, ainsi qu'un résumé global permettant de déterminer si l'exercice est validé. En cas d'échec, les différences entre les sorties sont présentées de manière explicite afin d'aider l'utilisateur à comprendre ses erreurs. Pour éviter les blocages liés aux boucles infinies ou aux programmes excessivement lents, le système impose des limites de temps d'exécution (timeouts) configurables selon le type d'exercice.
+
+Le système mesure le temps de résolution d'un exercice, depuis son ajout au répertoire de travail jusqu'à la validation complète des tests. Ces informations sont enregistrées localement de manière fiable et peuvent être consultées ultérieurement afin de permettre à l'utilisateur de suivre sa progression. À terme, ces données pourront servir de base à un système de recommandation d'exercices adaptés, proposant des défis en fonction du niveau estimé de l'utilisateur, de sa progression, de ses taux de réussite et des difficultés rencontrées.
+
+
 
 \section{Contraintes}
 
 \subsection{Contraintes fonctionnelles}
 
-\begin{itemize}
-    \item \textbf{CF1 : Exécution locale des solutions} \\
-    Les exercices doivent être résolus et testés localement sur la machine de l’utilisateur, sans dépendre d’une infrastructure distante obligatoire. \\
+% \begin{itemize}
+%     \item \textbf{CF1 : Exécution locale des solutions} \\
+%     Les exercices doivent être résolus et testés localement sur la machine de l’utilisateur, sans dépendre d’une infrastructure distante obligatoire. \\
 
-    \item \textbf{CF2 : Structure standardisée des exercices} \\
-    Chaque exercice devra respecter une organisation commune (énoncé, fichier(s) de travail, tests, métadonnées), afin d’assurer un fonctionnement homogène du système.\\
+%     \item \textbf{CF2 : Structure standardisée des exercices} \\
+%     Chaque exercice devra respecter une organisation commune (énoncé, fichier(s) de travail, tests, métadonnées), afin d’assurer un fonctionnement homogène du système.\\
 
-    \item \textbf{CF3 : Gestion d’un répertoire de travail isolé} \\
-    Le système doit éviter de modifier directement le dépôt d’exercices et créer un espace de travail séparé pour l’utilisateur.\\
+%     \item \textbf{CF3 : Gestion d’un répertoire de travail isolé} \\
+%     Le système doit éviter de modifier directement le dépôt d’exercices et créer un espace de travail séparé pour l’utilisateur.\\
 
-    \item \textbf{CF4 : Résultats de tests clairs et exploitables} \\
-    Lors de l’exécution des tests, le système doit fournir un retour lisible (succès/échec), et afficher les écarts entre sortie obtenue et sortie attendue.\\
+%     \item \textbf{CF4 : Résultats de tests clairs et exploitables} \\
+%     Lors de l’exécution des tests, le système doit fournir un retour lisible (succès/échec), et afficher les écarts entre sortie obtenue et sortie attendue.\\
 
-    \item \textbf{CF5 : Support initial du langage C} \\
-    Le langage C est prioritaire pour la première version. La conception devra néanmoins rester extensible pour permettre l’ajout futur d’autres langages.\\
+%     \item \textbf{CF5 : Support initial du langage C} \\
+%     Le langage C est prioritaire pour la première version. La conception devra néanmoins rester extensible pour permettre l’ajout futur d’autres langages.\\
 
-    \item \textbf{CF6 : Mesure cohérente du temps} \\
-    Le temps de résolution doit être mesuré de manière fiable (début/fin) et sauvegardé pour permettre un suivi et une éventuelle recommandation.\\
-\end{itemize}
+%     \item \textbf{CF6 : Mesure cohérente du temps} \\
+%     Le temps de résolution doit être mesuré de manière fiable (début/fin) et sauvegardé pour permettre un suivi et une éventuelle recommandation.\\
+% \end{itemize}
+
+Les exercices doivent être résolus et évalués localement sur la machine de l'utilisateur. Le système ne repose pas sur une infrastructure distante obligatoire pour la compilation ou l'exécution des programmes, afin de garantir son autonomie et sa portabilité.
+
+Chaque exercice respecte une structure standardisée comprenant un énoncé, des fichiers de travail, des tests et des métadonnées. Cette organisation uniforme permet au système de charger, compiler et tester les exercices de manière automatisée et cohérente.
+
+Le système gère un répertoire de travail isolé pour l'utilisateur. Les fichiers du dépôt d'exercices ne sont jamais modifiés directement, ce qui permet de réinitialiser un exercice ou d'en recommencer un autre sans altérer la base initiale.
+
+Lors de l'exécution des tests, le système fournit un retour clair et exploitable. Les résultats indiquent explicitement si un test a réussi ou échoué, et mettent en évidence les écarts entre la sortie obtenue et la sortie attendue. Ces informations doivent être compréhensibles sans analyse technique approfondie.
+
+Dans sa version initiale, le système prend en charge le langage C. Toutefois, son architecture doit rester extensible afin de permettre l'ajout ultérieur d'autres langages de programmation sans remise en cause de la structure existante.
+
+Le temps de résolution des exercices doit être mesuré de manière cohérente et fiable. Le système enregistre le moment où l'utilisateur commence à travailler sur un exercice et celui où il le valide complètement, permettant ainsi un suivi précis de la progression et servant de base à d'éventuelles recommandations personnalisées.
 
 \subsection{Contraintes non fonctionnelles}
 
-\begin{itemize}
-    \item \textbf{CNF1 : Portabilité} \\
-    Le système devra fonctionner sur un environnement Linux standard. Une compatibilité macOS/Windows pourra être envisagée selon le temps disponible.\\
+% \begin{itemize}
+%     \item \textbf{CNF1 : Portabilité} \\
+%     Le système devra fonctionner sur un environnement Linux standard. Une compatibilité macOS/Windows pourra être envisagée selon le temps disponible.\\
 
-    \item \textbf{CNF2 : Simplicité 
-    d’installation et d’utilisation} \\
-    L’outil devra être simple à installer (une commande ou un script) et facilement utilisable via une interface en ligne de commande.\\
+%     \item \textbf{CNF2 : Simplicité 
+%     d’installation et d’utilisation} \\
+%     L’outil devra être simple à installer (une commande ou un script) et facilement utilisable via une interface en ligne de commande.\\
 
-    \item \textbf{CNF3 : Robustesse} \\
-    Le système doit gérer proprement les erreurs courantes : compilation impossible, fichier manquant, mauvaise configuration, timeout, etc.\\
+%     \item \textbf{CNF3 : Robustesse} \\
+%     Le système doit gérer proprement les erreurs courantes : compilation impossible, fichier manquant, mauvaise configuration, timeout, etc.\\
 
-    \item \textbf{CNF4 : Sécurité minimale} \\
-    Les programmes exécutés appartenant à l’utilisateur, le système ne peut pas garantir une sécurité totale, mais doit limiter les risques évidents (timeouts, exécution contrôlée, pas de suppression de fichiers système).\\
+%     \item \textbf{CNF4 : Sécurité minimale} \\
+%     Les programmes exécutés appartenant à l’utilisateur, le système ne peut pas garantir une sécurité totale, mais doit limiter les risques évidents (timeouts, exécution contrôlée, pas de suppression de fichiers système).\\
 
-    \item \textbf{CNF5 : Performance} \\
-    L’exécution des tests doit rester rapide afin de permettre un entraînement fluide. Un retour doit être fourni en quelques secondes pour les exercices simples.
+%     \item \textbf{CNF5 : Performance} \\
+%     L’exécution des tests doit rester rapide afin de permettre un entraînement fluide. Un retour doit être fourni en quelques secondes pour les exercices simples.
 
-    \item \textbf{CNF6 : Extensibilité} \\
-    L’architecture doit permettre d’ajouter facilement de nouveaux exercices, de nouveaux tests, et éventuellement de nouveaux langages sans devoir réécrire le système.\\
+%     \item \textbf{CNF6 : Extensibilité} \\
+%     L’architecture doit permettre d’ajouter facilement de nouveaux exercices, de nouveaux tests, et éventuellement de nouveaux langages sans devoir réécrire le système.\\
 
-    \item \textbf{CNF7 : Lisibilité des retours} \\
-    Les messages affichés à l’utilisateur doivent être compréhensibles, structurés et exploitables (couleurs, résumé, détails optionnels).\\
-\end{itemize}
+%     \item \textbf{CNF7 : Lisibilité des retours} \\
+%     Les messages affichés à l’utilisateur doivent être compréhensibles, structurés et exploitables (couleurs, résumé, détails optionnels).\\
+% \end{itemize}
+
+Le système doit fonctionner sur un environnement Linux standard. Une compatibilité avec d'autres systèmes d'exploitation pourra être envisagée ultérieurement, en fonction du temps et des ressources disponibles.
+
+L'installation et l'utilisation de l'outil doivent rester simples. L'objectif est de permettre à un utilisateur de commencer à s'entraîner rapidement, à l'aide d'une installation minimale et d'une interface en ligne de commande intuitive.
+
+Le système doit être robuste face aux erreurs courantes, telles que les erreurs de compilation, les fichiers manquants ou les mauvaises configurations. Les messages d'erreur doivent être explicites et permettre à l'utilisateur de comprendre rapidement l'origine du problème.
+
+Afin d'éviter les blocages, le système intègre des mécanismes de limitation du temps d'exécution. Les programmes dont l'exécution dépasse une durée raisonnable sont automatiquement interrompus et un message informe l'utilisateur de cette interruption.
+
+Les performances doivent rester suffisantes pour garantir une utilisation fluide. Les tests simples doivent produire un retour rapide, permettant à l'utilisateur d'enchaîner les itérations sans latence excessive.
+
+Les retours fournis à l'utilisateur doivent être lisibles et bien structurés. L'utilisation de couleurs pour différencier succès et échecs, de résumés synthétiques et de détails optionnels consultables à la demande permet de rendre l'information exploitable sans surcharge visuelle.
+
+Enfin, l'architecture globale du système doit être pensée de manière extensible, afin de faciliter l'ajout de nouveaux exercices, de nouveaux tests ou de nouvelles fonctionnalités sans nécessiter une refonte complète.
+
 
 \section{Organisation des exercices}
 
@@ -224,14 +265,14 @@ Afin de réaliser le système, nous prévoyons d’implémenter les fonctionnali
 
 \begin{verbatim}
 exo_nom/
- ├── README.md
- ├── src/
- │   └── main.c
- ├── tests/
-     ├── input1.txt
-     ├── output1.txt
-     └── ...
- 
+ |-- README.md
+ |-- config.yaml
+ |-- src/
+ |   `-- main.c
+ |-- tests/
+     |-- input1.txt
+     |-- output1.txt
+     `-- ...
 \end{verbatim}
 
 \subsection{Métadonnées attendues}
@@ -246,7 +287,182 @@ exo_nom/
 
 \section{Livrables}
 
+Le projet donnera lieu à la production des éléments suivants, organisés selon les phases de développement prévues.
+
+\subsection{Livrables techniques}
+
+\subsubsection{Code source et exécutables}
+
+Le système sera livré sous la forme d'un outil en ligne de commande fonctionnel, accompagné de l'ensemble de son code source. L'application devra être installable via un script ou une commande simple, et utilisable immédiatement après installation sur un environnement Linux standard.
+
+Le code source comprendra l'ensemble des modules nécessaires au fonctionnement du système : gestion des exercices, compilation, exécution des tests, mesure du temps, affichage des résultats. L'architecture devra être modulaire et extensible, permettant l'ajout futur de nouvelles fonctionnalités ou de nouveaux langages de programmation.
+
+\subsubsection{Base d'exercices}
+
+Une base d'exercices sera fournie, structurée selon le format standardisé défini dans les contraintes fonctionnelles. Cette base contiendra un ensemble minimal d'exercices en langage C, couvrant différents niveaux de difficulté et différents concepts de programmation.
+
+Chaque exercice sera composé d'un énoncé, de fichiers sources à compléter, de tests automatisés et d'un fichier de métadonnées au format YAML décrivant les paramètres de compilation, d'exécution et de validation. Une solution de référence pourra être fournie pour permettre la comparaison automatique des résultats.
+
+\subsubsection{Bibliothèque de tests}
+
+L'intégration de la bibliothèque Grader, développée par M. Morandat, permettra d'automatiser la génération et l'exécution des tests pour les exercices en langage C. Cette bibliothèque sera documentée et configurée pour être utilisable directement par le système.
+
+\subsection{Documentation}
+
+\subsubsection{Documentation utilisateur}
+
+Un guide complet destiné aux utilisateurs finaux (étudiants) sera fourni. Ce guide comprendra :
+
+\begin{itemize}
+    \item Un tutoriel de démarrage rapide expliquant l'installation et la première utilisation
+    \item Une description détaillée de toutes les commandes disponibles avec leur syntaxe et des exemples d'utilisation
+    \item Une section FAQ répondant aux problèmes courants
+    \item Des conseils d'utilisation et des bonnes pratiques pour progresser efficacement
+\end{itemize}
+
+\subsubsection{Documentation technique}
+
+Une documentation technique sera produite à destination des développeurs et des créateurs d'exercices. Elle contiendra :
+
+\begin{itemize}
+    \item L'architecture globale du système et l'explication des différents modules
+    \item Le format complet du fichier YAML de métadonnées avec tous les champs disponibles
+    \item Un guide de création d'exercices avec des templates et des exemples commentés
+    \item Les spécifications techniques pour l'ajout de nouveaux langages de programmation
+    \item La documentation de l'API interne et des points d'extension du système
+\end{itemize}
+
 \section{Critères de validation}
+
+Le projet sera considéré comme validé si l'ensemble des critères suivants sont satisfaits. Ces critères sont organisés par niveau de priorité selon la classification MoSCoW (Must have, Should have, Could have).
+
+\subsection{Critères obligatoires (Must have)}
+
+\subsubsection{Installation et configuration}
+
+Le système doit pouvoir être installé sur une machine Linux standard en une seule commande ou via un script d'installation simple. L'installation doit créer correctement l'ensemble de la structure de répertoires nécessaire et vérifier la présence des dépendances requises. Un message de confirmation doit indiquer le succès de l'installation.
+
+La base d'exercices doit pouvoir être installée de manière autonome et sans connexion à un serveur distant après le premier téléchargement. L'utilisateur doit pouvoir vérifier que l'installation s'est déroulée correctement via une commande dédiée.
+
+\subsubsection{Consultation des exercices}
+
+L'utilisateur doit pouvoir afficher la liste complète des exercices disponibles via une commande simple. L'affichage doit présenter de manière lisible et structurée les informations essentielles : nom de l'exercice, langage de programmation, niveau de difficulté estimé. L'organisation en colonnes et l'utilisation de couleurs doivent faciliter la lecture, même en présence d'un grand nombre d'exercices.
+
+Si la liste est trop longue, un système de pagination doit être mis en place pour éviter la saturation de l'affichage terminal. L'utilisateur doit également pouvoir accéder à une aide détaillant toutes les commandes disponibles avec leur syntaxe et des exemples d'utilisation.
+
+\subsubsection{Gestion du répertoire de travail}
+
+Le système doit permettre d'ajouter un exercice à un répertoire de travail de l'utilisateur. Cette opération doit copier tous les fichiers nécessaires (énoncé, fichiers sources, métadonnées) sans modifier le dépôt d'exercices d'origine.
+
+Le système doit vérifier que le répertoire de destination est vide avant d'y copier l'exercice et afficher un message d'erreur clair dans le cas contraire. Une fois l'exercice copié, les tests doivent être automatiquement compilés et le code source de la solution de référence doit être supprimé pour éviter toute tentation de consultation prématurée.
+
+L'utilisateur doit pouvoir nettoyer son répertoire de travail via une commande dédiée. Cette commande doit demander une confirmation avant de supprimer les fichiers et ne doit affecter que le répertoire de travail, en préservant tous les autres fichiers du système.
+
+\subsubsection{Compilation et exécution}
+
+Le système doit permettre de compiler le code de l'utilisateur en utilisant les paramètres définis dans le fichier de métadonnées de l'exercice. Les erreurs et avertissements de compilation doivent être affichés de manière claire et lisible.
+
+Une fois la compilation réussie, le système doit permettre l'exécution automatique de l'ensemble des tests associés à l'exercice. Les résultats des tests doivent indiquer explicitement quels tests ont réussi et lesquels ont échoué.
+
+Un résumé global doit permettre de déterminer rapidement si l'exercice est entièrement validé ou non. En cas d'échec d'un test, les différences entre la sortie obtenue et la sortie attendue doivent être présentées de manière explicite pour aider l'utilisateur à identifier et corriger ses erreurs.
+
+\subsubsection{Format des métadonnées}
+
+Chaque exercice doit respecter une structure standardisée avec un fichier de métadonnées au format YAML. Ce fichier doit contenir au minimum : le langage de programmation, la commande de compilation, la description des tests à exécuter, et les paramètres d'exécution.
+
+Le système doit valider le format du fichier YAML au chargement de l'exercice et afficher un message d'erreur explicite en cas de non-conformité. Un template de fichier YAML doit être fourni comme exemple de référence.
+
+\subsubsection{Support du langage C}
+
+Le système doit fonctionner de manière complète et fiable pour les exercices en langage C. La compilation doit utiliser les paramètres standard (gcc ou clang) et les tests doivent pouvoir comparer les sorties avec une solution de référence ou avec des résultats attendus prédéfinis.
+
+\subsection{Critères importants (Should have)}
+
+\subsubsection{Gestion des timeouts}
+
+Le système doit implémenter deux types de gestion du temps :
+
+\begin{itemize}
+    \item \textbf{Timeout de résolution} : Le système doit pouvoir définir un temps de résolution recommandé pour chaque exercice dans les métadonnées. Si ce temps est dépassé, un avertissement doit être affiché à l'utilisateur pour l'informer qu'il dépasse le temps attendu, sans pour autant bloquer sa progression. Ce mécanisme sert de point de repère pédagogique.
+    
+    \item \textbf{Timeout d'exécution} : Pour éviter les blocages liés aux boucles infinies ou aux programmes trop lents, le système doit imposer une limite maximale de temps d'exécution pour chaque test. Si cette limite est atteinte, le programme doit être automatiquement interrompu et un message clair doit informer l'utilisateur de cette interruption.
+\end{itemize}
+
+\subsubsection{Mesure du temps de résolution}
+
+Le système doit enregistrer le temps de résolution de chaque exercice, depuis le moment où l'exercice est ajouté au répertoire de travail jusqu'au moment où tous les tests sont validés avec succès.
+
+Ces informations doivent être sauvegardées localement dans un format exploitable (par exemple JSON ou base de données SQLite) avec la date et l'heure de début et de fin. L'utilisateur doit pouvoir consulter son historique de temps via une commande dédiée, permettant ainsi de suivre sa progression au fil du temps.
+
+\subsubsection{Organisation par langage}
+
+Les exercices doivent être organisés dans des sous-répertoires selon leur langage de programmation (par exemple \texttt{/exercices/c/}, \texttt{/exercices/java/}). Le système doit détecter automatiquement le langage d'un exercice en fonction de son emplacement ou de ses métadonnées.
+
+La commande de listage des exercices doit permettre de filtrer les résultats par langage de programmation afin de faciliter la navigation dans une base d'exercices multi-langages.
+
+\subsubsection{Intégration de la bibliothèque Grader}
+
+La bibliothèque Grader sera intégrée au système pour permettre l'automatisation de la génération et de l'exécution des tests pour les exercices en langage C.
+
+La documentation d'utilisation de cette bibliothèque doit être fournie et les exercices utilisant Grader doivent générer des tests reproductibles et cohérents.
+
+\subsubsection{Gestion robuste des erreurs}
+
+Le système doit gérer de manière robuste l'ensemble des erreurs courantes : fichier manquant, mauvaise configuration, erreur de compilation, erreur d'exécution, format de métadonnées invalide.
+
+Chaque erreur doit être accompagnée d'un message clair et explicite permettant à l'utilisateur de comprendre rapidement la nature du problème. Un mode verbeux doit être disponible pour afficher des traces détaillées en cas de besoin. Les erreurs ne doivent en aucun cas causer un plantage du système.
+
+\subsection{Critères souhaitables (Could have)}
+
+\subsubsection{Filtrage et recherche d'exercices}
+
+Le système doit permettre de filtrer les exercices selon différents critères : niveau de difficulté, thème abordé (récursion, pointeurs, structures de données, etc.), langage de programmation.
+
+Les tags doivent être définis dans les métadonnées des exercices et validés par rapport à un schéma centralisé garantissant leur cohérence. Une commande doit permettre de lister tous les tags disponibles et une autre de rechercher des exercices selon plusieurs critères combinés.
+
+\subsubsection{Validation centralisée des tags}
+
+Un fichier de schéma central (\texttt{schema/tags.yaml}) doit définir l'ensemble des tags autorisés pour les exercices. Le système doit valider les tags lors du chargement d'un exercice et afficher un message d'erreur clair si un tag non autorisé est utilisé.
+
+Une documentation doit expliquer comment proposer de nouveaux tags pour enrichir le schéma au fil du temps.
+
+\subsubsection{Recommandation d'exercices}
+
+À partir des données de temps de résolution et de taux de réussite enregistrées, le système peut proposer des exercices adaptés au niveau estimé de l'utilisateur.
+
+Ce système de recommandation peut se baser sur des heuristiques simples (progression linéaire de difficulté) ou sur des algorithmes plus sophistiqués tenant compte des performances passées de l'utilisateur sur différents types d'exercices.
+
+\subsubsection{Support d'autres langages}
+
+Bien que le langage C soit prioritaire, l'architecture du système doit permettre l'ajout ultérieur d'autres langages de programmation (Java, Python, Rust, etc.) sans nécessiter de refonte majeure.
+
+L'ajout d'un nouveau langage doit se faire en définissant les paramètres de compilation et d'exécution spécifiques dans les métadonnées et en ajoutant les exercices correspondants dans un sous-répertoire dédié.
+
+\subsection{Critères de qualité transverses}
+
+\subsubsection{Performance}
+
+L'exécution des tests pour un exercice simple doit produire un retour en moins de 5 secondes sur une machine standard. Le temps de compilation ne doit pas excéder quelques secondes pour du code de taille raisonnable.
+
+Le système doit rester fluide et réactif même en présence d'une base d'exercices contenant plusieurs centaines d'entrées.
+
+\subsubsection{Portabilité}
+
+Le système doit fonctionner sur toute distribution Linux récente disposant des outils de compilation standard (gcc ou clang pour le C). Les dépendances externes doivent être minimales et clairement documentées.
+
+Une compatibilité avec macOS et Windows pourra être envisagée en fonction du temps disponible, mais n'est pas requise pour la validation du projet.
+
+\subsubsection{Extensibilité}
+
+L'architecture du système doit permettre l'ajout facile de nouvelles fonctionnalités : nouveaux types de tests, nouveaux langages, nouveaux formats de métadonnées, nouvelles commandes.
+
+Le code doit être modulaire, bien commenté et respecter les bonnes pratiques de développement pour faciliter les contributions futures.
+
+\subsubsection{Lisibilité des sorties}
+
+Tous les messages affichés à l'utilisateur doivent être clairs, structurés et exploitables. L'utilisation de couleurs doit permettre de distinguer rapidement les succès des échecs. Les informations détaillées doivent être disponibles sur demande mais ne pas encombrer l'affichage par défaut.
+
+Les résultats de tests doivent être présentés de manière synthétique avec possibilité d'afficher les détails des échecs pour faciliter le débogage.s
 
 \section{Planning prévisionnel}
 

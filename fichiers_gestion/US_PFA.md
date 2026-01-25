@@ -1,58 +1,8 @@
 # User Stories - Système d'Entraînement aux Exercices de Programmation
 
-## Epic 1 : Infrastructure de Base
+## Epic 1 : Consultation et Navigation
 
-### US1.1 - Installation de la base d'exercices
-En tant qu' étudiant  
-Je veux installer facilement une base d'exercices  
-Afin de commencer à m'entraîner sans configuration complexe
-
-Critères d'acceptation :
-- La commande "trainer install exs" télécharge et configure la base d'exercices
-- Un message de confirmation s'affiche après l'installation
-- La structure des répertoires est créée correctement
-- Les dépendances nécessaires sont vérifiées
-
-Priorité : Haute  
-Difficulté estimée : 5 points
-
----
-
-### US1.2 - Ajout d'un exercice au répertoire de travail
-En tant qu' étudiant  
-Je veux copier un exercice dans mon répertoire de travail  
-Afin de commencer à le résoudre
-
-Critères d'acceptation :
-- La commande "trainer add ex dir" copie l'exercice dans le répertoire spécifié
-- Le répertoire doit être vide au départ (vérification)
-- Les fichiers yaml de métadonnées sont copiés correctement
-- Un message d'erreur clair si le répertoire n'est pas vide
-
-Priorité : Haute  
-Difficulté estimée : 3 points
-
----
-
-### US1.3 - Nettoyage du répertoire de travail
-En tant qu' étudiant  
-Je veux nettoyer mon répertoire de travail  
-Afin de repartir sur un nouvel exercice proprement
-
-Critères d'acceptation :
-- La commande "trainer clean dir" supprime tous les fichiers du répertoire
-- Une confirmation est demandée avant suppression
-- Le répertoire reste existant mais vide
-- Les fichiers en dehors du répertoire ne sont pas affectés
-
-Priorité : Moyenne  
-Difficulté estimée : 2 points
-
----
-
-## Epic 2 : Consultation et Navigation
-
-### US2.1 - Lister les exercices disponibles
+### US1.1 - Lister les exercices disponibles
 En tant qu' étudiant  
 Je veux voir la liste des exercices disponibles  
 Afin de choisir sur quoi m'entraîner
@@ -68,7 +18,7 @@ Difficulté estimée : 3 points
 
 ---
 
-### US2.2 - Voir l'aide des commandes
+### US1.2 - Voir l'aide des commandes
 En tant qu' utilisateur  
 Je veux voir la liste des commandes disponibles  
 Afin de savoir comment utiliser le système
@@ -79,7 +29,59 @@ Critères d'acceptation :
 - Des exemples d'utilisation sont fournis
 - L'aide est claire et concise
 
+Priorité : Moyenne  
+Difficulté estimée : 2 points
+
+---
+
+## Epic 2 : Infrastructure de Base
+
+### US2.1 - Installation de la base d'exercices
+En tant qu' étudiant  
+Je veux installer facilement une base d'exercices  
+Afin de commencer à m'entraîner sans configuration complexe
+
+Critères d'acceptation :
+- La commande "trainer install exs" télécharge et configure la base d'exercices
+- Un message de confirmation s'affiche après l'installation
+- La structure des répertoires est créée correctement
+- Les dépendances nécessaires sont vérifiées
+
 Priorité : Haute  
+Difficulté estimée : 5 points
+
+---
+
+### US2.2 - Ajout d'un exercice au répertoire de travail
+En tant qu' étudiant  
+Je veux copier un exercice dans mon répertoire de travail  
+Afin de commencer à le résoudre
+
+Critères d'acceptation :
+- La commande "trainer add ex dir" copie l'exercice dans le répertoire spécifié
+- Le répertoire doit être vide au départ (vérification)
+- Les fichiers yaml de métadonnées sont copiés correctement
+- Un message d'erreur clair si le répertoire n'est pas vide
+- Les tests sont compilés une fois arrivée
+- Le code source est supprimé du répertoire
+
+Priorité : Haute  
+Difficulté estimée : 3 points
+
+---
+
+### US2.3 - Nettoyage du répertoire de travail
+En tant qu' étudiant  
+Je veux nettoyer mon répertoire de travail  
+Afin de repartir sur un nouvel exercice proprement
+
+Critères d'acceptation :
+- La commande "trainer clean dir" supprime tous les fichiers du répertoire
+- Une confirmation est demandée avant suppression
+- Le répertoire reste existant mais vide
+- Les fichiers en dehors du répertoire ne sont pas affectés
+
+Priorité : Moyenne  
 Difficulté estimée : 2 points
 
 ---
@@ -98,7 +100,7 @@ Critères d'acceptation :
 - Les warnings sont affichés mais ne bloquent pas
 
 Priorité : Haute  
-Difficulté estimée : 5 points
+Difficulté estimée : 2 points
 
 ---
 
@@ -131,6 +133,20 @@ Critères d'acceptation :
 
 Priorité : Moyenne  
 Difficulté estimée : 3 points
+
+---
+
+### US3.4 - Timeout pour éviter les boucles infinies
+En tant que système  
+Je veux pouvoir arrêter les programmes qui durent trop longtemps
+Afin de d'éviter les boucles infinies
+
+Critères d'acceptation
+- Le programme est arrêté s'il prend trop de temps
+- Un message est envoyé à l'utilisateur pour l'informer de l'arrêt
+
+Priorité : Moyenne
+Difficulté estimée : 2 points
 
 ---
 
@@ -215,7 +231,7 @@ Critères d'acceptation :
 - Les tests générés sont reproductibles
 
 Priorité : Moyenne  
-Difficulté estimée : 8 points
+Difficulté estimée : 4 points
 
 ---
 
@@ -264,7 +280,7 @@ Critères d'acceptation :
 - La date et l'heure sont enregistrées
 - Un graphique ou tableau récapitulatif est disponible
 
-Priorité : Basse  
+Priorité : Moyenne  
 Difficulté estimée : 3 points
 
 ---
@@ -282,7 +298,7 @@ Critères d'acceptation :
 - Plusieurs tags peuvent être combinés
 - Les tags sont suggérés lors de la saisie
 
-Priorité : Basse (Phase 2)  
+Priorité : Basse 
 Difficulté estimée : 5 points
 
 ---
@@ -382,22 +398,6 @@ Critères d'acceptation :
 
 Priorité : Haute  
 Difficulté estimée : 5 points
-
----
-
-### US8.3 - Tests unitaires du système
-En tant que développeur du système  
-Je veux avoir une suite de tests automatisés  
-Afin de garantir la stabilité
-
-Critères d'acceptation :
-- Couverture de code > 80%
-- Tests d'intégration pour chaque commande
-- CI/CD configuré (GitHub Actions ou équivalent)
-- Tests sur plusieurs versions de Python
-
-Priorité : Moyenne  
-Difficulté estimée : 8 points
 
 ---
 
