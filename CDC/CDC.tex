@@ -465,7 +465,89 @@ Tous les messages affichés à l'utilisateur doivent être clairs, structurés e
 Les résultats de tests doivent être présentés de manière synthétique avec possibilité d'afficher les détails des échecs pour faciliter le débogage.s
 
 \section{Planning prévisionnel}
+\subsection{Approche et méthodologie}
+Le développement suivra la methode agile, centrée sur des livrables fonctionnels utilisables dès les premières itérations. Chaque incrément correspond à un ensemble cohérent de user stories et se termine par une phase de validation(les tests).
+
+La priorisation:
+\begin{itemize}
+    \item \textbf{Priorité Haute} : base opérationnelle (installation, listing, ajout, compilation, exécution de tests simples, gestion d'erreurs).
+    \item \textbf{Priorité Moyenne} : timeouts complets, statistiques, intégration Grader, usage de LLM,..
+    \item \textbf{Priorité Basse} : extension Java, version web,...
+\end{itemize}
+
+\section{Planning prévisionnel}
+
+Le projet suit le planning imposé par l'encadrement. Les livrables ci-dessous sont spécialisés pour le sujet « base d'exercices + systeme d'entraînement ».
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{3.2cm}|p{4.2cm}|p{7.0cm}|}
+\hline
+\textbf{Date} & \textbf{Jalon imposé} & \textbf{Livrables réalistes pour ce projet} \\
+\hline
+14 janvier 2026 &
+Réunion client / responsable pédagogique &
+compréhension du besoin, attentes de démo, contraintes, décisions d'orientation (2 dépôts), identification des risques (exécution de code, Grader). \\
+\hline
+28 janvier 2026 &
+Livraison cahier des charges &
+fonctionnalités, user stories, structure d'un exercice, contrat YAML (v0), critères de validation, contraintes, risques, planning (aligné V0--V3--final). \\
+\hline
+04 février 2026 (1 semaine) &
+Validation / révision CdC + livraison V0 (« Hello World ») &
+installation base et lister les exercices de cette base et ajoute d'un exercice, 1er version de métadonnées d'exercices et yaml, plus nettoyage. \\
+\hline
+25 février 2026 (3 semaines) &
+Livraison partielle V1 / démo &
+compilation/execution/test avec grader (traitement des cas simple et cas d'exam avec dependance entre les exercices et fonctions) d'un exercice, controle time. \\
+\hline
+01 mars 2026 (1 semaine) &
+Livraison partielle V2 / démo &
+time out pour execution et affichage des erreurs (compilation ou pendant l'execution, \ldots). \\
+\hline
+22 avril 2026 (7 semaines) &
+Livraison partielle V3 / démo &
+profile d'utilisateur et utilisation LLM pour proposer les exercices selon niveau et souhaite d'utilisateur + generaliser les langues (java, \ldots) + une interface web (facultatif). \\
+\hline
+13 mai 2026 (3 semaines) &
+Livraison finale, démo, présentation et bilan &
+finaliser et une version stable avec les tests et rapport et documentation. \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Stratégie de validation}
+
+La validation s'appuie sur :
+\begin{itemize}
+    \item \textbf{Tests unitaires} sur les modules Python (parsing YAML, gestion chemins, runner d'exécution).
+    \item \textbf{Tests d'intégration} (scénarios CLI complets) : install → ls → add → execute → stats.
+    \item \textbf{Jeu d'exercices minimal} couvrant : IO simple, comparaison référence, timeout, compilation échouée, exécution non-terminante.
+
+\end{itemize}
 
 \section{Risques et limites}
+
+\subsection{Risques techniques}
+
+\begin{itemize}
+    \item exécution de code utilisateur (boucles infinies, programmes trop lents, consommation CPU/mémoire) : risque de blocage du système: arrêt forcé du processus...
+    \item compilation (gcc, versions différentes, flags, dépendances) : erreurs non reproductibles selon machines : dépendances minimales, vérification à l'installation, messages d'erreur clairs.
+    \item métadonnées YAML incorrectes (champs manquants, format invalide) : crash ou comportement incohérent : validation au chargement + valeurs par défaut + commande \texttt{trainer validate}.
+    \item tests non fiables (cas limites oubliés, sorties dépendantes de l'environnement) : faux positifs/faux négatifs : base de tests minimale au début, puis automatisation, reproductibilité (seed) pour Grader.
+    \item gestion Git (dépôt indisponible, conflit, mise à jour cassée) : base non installable : commandes robustes, messages de récupération, versionnement/release du dépôt d'exercices.
+\end{itemize}
+
+\subsection{Limites (hors périmètre ou acceptées)}
+
+\begin{itemize}
+    \item pas d'objectif anti-triche : l'utilisateur peut utiliser Internet/IA, le système reste un outil d'entraînement.
+    \item sécurité non garantie à 100\% : exécution locale, pas de sandbox complète, seulement des protections minimales (timeout, isolation workspace).
+    \item support multi-OS non prioritaire : Linux standard ciblé, extension possible plus tard.
+    \item recommandations avancées par LLM : optionnel, dépend des performances et du temps restant, au mieux POC.
+    \item support Java + interface web : optionnel/facultatif, dépend du temps restant après stabilisation du coeur du système.
+\end{itemize}
+
 
 \end{document}
