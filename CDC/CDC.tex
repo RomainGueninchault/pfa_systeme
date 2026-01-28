@@ -8,7 +8,7 @@
 \usepackage{amsmath, amssymb}
 
 % Mise en page
-\usepackage[a4paper, height=22cm ,width=13.5cm]{geometry}
+\usepackage[a4paper, height=22cm, width=13.5cm]{geometry}
 \usepackage{titlesec}
 \usepackage{tocloft}
 \usepackage{array}
@@ -77,7 +77,7 @@
 \rule{\textwidth}{1pt}
 \vspace{0.6cm}
 
-{\Huge \textbf{Entrainement à la programmation}}\\[0.4cm]
+{\Huge \textbf{Entraînement à la programmation}}\\[0.4cm]
 {\Large Cahier des charges du PFA}
 
 \vspace{0.6cm}
@@ -132,35 +132,9 @@ Le système analysera le temps nécessaire à l’utilisateur pour implémenter 
 
 \subsection{Hors périmètre}
 
-L’utilisateur aura librement accès aux outils d’IA et à la documentation disponible sur Internet. Le système n’a pas vocation à reproduire des conditions d’examen : il ne cherchera donc pas à détecter une éventuelle “triche”, et l’apprentissage reposera principalement sur la bonne foi et la motivation de l’utilisateur. 
+L’utilisateur aura librement accès aux outils d’IA et à la documentation disponible sur Internet. Le système n’a pas vocation à reproduire des conditions d’examen : il ne cherchera donc pas à détecter une éventuelle « triche », et l’apprentissage reposera principalement sur la bonne foi et la motivation de l'utilisateur.
 
 \section{Fonctionnalités attendues}
-
-%Afin de réaliser le système, nous prévoyons d’implémenter les fonctionnalités suivantes :
-
-% \begin{itemize}
-%     \item \textbf{F1 : Initialisation de la base d’exercices} \verb|(Must)| \\
-%     Mise en place (clonage / installation) du dépôt d’exercices sur la machine de l’utilisateur.\\
-
-%     \item \textbf{F2 : Liste des exercices disponibles} \verb|(Must)|\\
-%     Affichage clair et lisible des exercices (colonnes, couleurs, filtrage éventuel : difficulté, thème, etc.).\\
-
-%     \item \textbf{F3 : Gestion du répertoire de travail} \verb|(Must)|\\
-%     Ajout d’un exercice dans un répertoire personnel de travail, avec possibilité de nettoyage/réinitialisation de ce répertoire.\\
-
-%     \item \textbf{F4 : Exécution de tests manuels simples} \verb|(Must)|\\
-%     Lancement de tests permettant de comparer automatiquement la sortie obtenue avec la sortie attendue.\\
-
-%     \item \textbf{F7 : Gestion des \textit{timeout}} \verb|(Should)|\\
-%     Définition de limites de temps d’exécution pour éviter les blocages liés aux boucles infinies ou aux programmes trop lents.\\
-
-%     \item \textbf{F5 : Mesure du temps de résolution} \verb|(Should)|\\
-%     Calcul du temps pris par l’utilisateur entre le début et la fin de l’implémentation.\\
-
-%     \item \textbf{F6 : Recommandation d’exercices adaptés} \verb|(Could)|\\
-%     Proposition d’exercices en fonction du niveau estimé de l’utilisateur (progression, réussite, temps, difficultés).\\
-
-% \end{itemize}
 
 Le système a pour objectif de fournir un environnement complet permettant à un utilisateur de s'entraîner à la programmation de manière autonome et progressive. Il repose sur une interface en ligne de commande offrant un ensemble de fonctionnalités destinées à faciliter la consultation, la résolution et l'évaluation d'exercices de programmation.
 
@@ -180,26 +154,6 @@ Le système mesure le temps de résolution d'un exercice, depuis son ajout au r�
 
 \subsection{Contraintes fonctionnelles}
 
-% \begin{itemize}
-%     \item \textbf{CF1 : Exécution locale des solutions} \\
-%     Les exercices doivent être résolus et testés localement sur la machine de l’utilisateur, sans dépendre d’une infrastructure distante obligatoire. \\
-
-%     \item \textbf{CF2 : Structure standardisée des exercices} \\
-%     Chaque exercice devra respecter une organisation commune (énoncé, fichier(s) de travail, tests, métadonnées), afin d’assurer un fonctionnement homogène du système.\\
-
-%     \item \textbf{CF3 : Gestion d’un répertoire de travail isolé} \\
-%     Le système doit éviter de modifier directement le dépôt d’exercices et créer un espace de travail séparé pour l’utilisateur.\\
-
-%     \item \textbf{CF4 : Résultats de tests clairs et exploitables} \\
-%     Lors de l’exécution des tests, le système doit fournir un retour lisible (succès/échec), et afficher les écarts entre sortie obtenue et sortie attendue.\\
-
-%     \item \textbf{CF5 : Support initial du langage C} \\
-%     Le langage C est prioritaire pour la première version. La conception devra néanmoins rester extensible pour permettre l’ajout futur d’autres langages.\\
-
-%     \item \textbf{CF6 : Mesure cohérente du temps} \\
-%     Le temps de résolution doit être mesuré de manière fiable (début/fin) et sauvegardé pour permettre un suivi et une éventuelle recommandation.\\
-% \end{itemize}
-
 Les exercices doivent être résolus et évalués localement sur la machine de l'utilisateur. Le système ne repose pas sur une infrastructure distante obligatoire pour la compilation ou l'exécution des programmes, afin de garantir son autonomie et sa portabilité.
 
 Chaque exercice respecte une structure standardisée comprenant un énoncé, des fichiers de travail, des tests et des métadonnées. Cette organisation uniforme permet au système de charger, compiler et tester les exercices de manière automatisée et cohérente.
@@ -213,30 +167,6 @@ Dans sa version initiale, le système prend en charge le langage C. Toutefois, s
 Le temps de résolution des exercices doit être mesuré de manière cohérente et fiable. Le système enregistre le moment où l'utilisateur commence à travailler sur un exercice et celui où il le valide complètement, permettant ainsi un suivi précis de la progression et servant de base à d'éventuelles recommandations personnalisées.
 
 \subsection{Contraintes non fonctionnelles}
-
-% \begin{itemize}
-%     \item \textbf{CNF1 : Portabilité} \\
-%     Le système devra fonctionner sur un environnement Linux standard. Une compatibilité macOS/Windows pourra être envisagée selon le temps disponible.\\
-
-%     \item \textbf{CNF2 : Simplicité 
-%     d’installation et d’utilisation} \\
-%     L’outil devra être simple à installer (une commande ou un script) et facilement utilisable via une interface en ligne de commande.\\
-
-%     \item \textbf{CNF3 : Robustesse} \\
-%     Le système doit gérer proprement les erreurs courantes : compilation impossible, fichier manquant, mauvaise configuration, timeout, etc.\\
-
-%     \item \textbf{CNF4 : Sécurité minimale} \\
-%     Les programmes exécutés appartenant à l’utilisateur, le système ne peut pas garantir une sécurité totale, mais doit limiter les risques évidents (timeouts, exécution contrôlée, pas de suppression de fichiers système).\\
-
-%     \item \textbf{CNF5 : Performance} \\
-%     L’exécution des tests doit rester rapide afin de permettre un entraînement fluide. Un retour doit être fourni en quelques secondes pour les exercices simples.
-
-%     \item \textbf{CNF6 : Extensibilité} \\
-%     L’architecture doit permettre d’ajouter facilement de nouveaux exercices, de nouveaux tests, et éventuellement de nouveaux langages sans devoir réécrire le système.\\
-
-%     \item \textbf{CNF7 : Lisibilité des retours} \\
-%     Les messages affichés à l’utilisateur doivent être compréhensibles, structurés et exploitables (couleurs, résumé, détails optionnels).\\
-% \end{itemize}
 
 Le système doit fonctionner sur un environnement Linux standard. Une compatibilité avec d'autres systèmes d'exploitation pourra être envisagée ultérieurement, en fonction du temps et des ressources disponibles.
 
@@ -256,9 +186,9 @@ Enfin, l'architecture globale du système doit être pensée de manière extensi
 \section{Organisation des exercices}
 
 \begin{itemize}
-    \item Un exercice est stocké dans un répertoire dédié et respecte une structure commune
-    \item Chaque exercice contient un énoncé, un ou plusieurs fichiers de travail, des tests, et des métadonnées
-    \item Le système doit pouvoir ajouter facilement un nouvel exercice en respectant cette structure
+    \item Un exercice est stocké dans un répertoire dédié et respecte une structure commune.
+    \item Chaque exercice contient un énoncé, un ou plusieurs fichiers de travail, des tests, et des métadonnées.
+    \item Le système doit pouvoir ajouter facilement un nouvel exercice en respectant cette structure.
 \end{itemize}
 
 \subsection{Structure minimale d’un exercice}
@@ -314,10 +244,10 @@ L'intégration de la bibliothèque Grader, développée par M. Morandat, permett
 Un guide complet destiné aux utilisateurs finaux (étudiants) sera fourni. Ce guide comprendra :
 
 \begin{itemize}
-    \item Un tutoriel de démarrage rapide expliquant l'installation et la première utilisation
-    \item Une description détaillée de toutes les commandes disponibles avec leur syntaxe et des exemples d'utilisation
-    \item Une section FAQ répondant aux problèmes courants
-    \item Des conseils d'utilisation et des bonnes pratiques pour progresser efficacement
+    \item Un tutoriel de démarrage rapide expliquant l'installation et la première utilisation ;
+    \item Une description détaillée de toutes les commandes disponibles avec leur syntaxe et des exemples d'utilisation ;
+    \item Une section FAQ répondant aux problèmes courants ;
+    \item Des conseils d'utilisation et des bonnes pratiques pour progresser efficacement.
 \end{itemize}
 
 \subsubsection{Documentation technique}
@@ -325,11 +255,11 @@ Un guide complet destiné aux utilisateurs finaux (étudiants) sera fourni. Ce g
 Une documentation technique sera produite à destination des développeurs et des créateurs d'exercices. Elle contiendra :
 
 \begin{itemize}
-    \item L'architecture globale du système et l'explication des différents modules
-    \item Le format complet du fichier YAML de métadonnées avec tous les champs disponibles
-    \item Un guide de création d'exercices avec des templates et des exemples commentés
-    \item Les spécifications techniques pour l'ajout de nouveaux langages de programmation
-    \item La documentation de l'API interne et des points d'extension du système
+    \item L'architecture globale du système et l'explication des différents modules ;
+    \item Le format complet du fichier YAML de métadonnées avec tous les champs disponibles ;
+    \item Un guide de création d'exercices avec des templates et des exemples commentés ;
+    \item Les spécifications techniques pour l'ajout de nouveaux langages de programmation ;
+    \item La documentation de l'API interne et des points d'extension du système.
 \end{itemize}
 
 \section{Critères de validation}
@@ -462,22 +392,22 @@ Le code doit être modulaire, bien commenté et respecter les bonnes pratiques d
 
 Tous les messages affichés à l'utilisateur doivent être clairs, structurés et exploitables. L'utilisation de couleurs doit permettre de distinguer rapidement les succès des échecs. Les informations détaillées doivent être disponibles sur demande mais ne pas encombrer l'affichage par défaut.
 
-Les résultats de tests doivent être présentés de manière synthétique avec possibilité d'afficher les détails des échecs pour faciliter le débogage.s
+Les résultats de tests doivent être présentés de manière synthétique avec possibilité d'afficher les détails des échecs pour faciliter le débogage.
 
 \section{Planning prévisionnel}
 \subsection{Approche et méthodologie}
-Le développement suivra la methode agile, centrée sur des livrables fonctionnels utilisables dès les premières itérations. Chaque incrément correspond à un ensemble cohérent de user stories et se termine par une phase de validation(les tests).
+Le développement suivra la méthode agile, centrée sur des livrables fonctionnels utilisables dès les premières itérations. Chaque incrément correspond à un ensemble cohérent de user stories et se termine par une phase de validation (les tests).
 
-La priorisation:
+La priorisation :
 \begin{itemize}
     \item \textbf{Priorité Haute} : base opérationnelle (installation, listing, ajout, compilation, exécution de tests simples, gestion d'erreurs).
-    \item \textbf{Priorité Moyenne} : timeouts complets, statistiques, intégration Grader, usage de LLM,..
-    \item \textbf{Priorité Basse} : extension Java, version web,...
+    \item \textbf{Priorité Moyenne} : timeouts complets, statistiques, intégration Grader, usage de LLM, ...
+    \item \textbf{Priorité Basse} : extension Java, version web, ...
 \end{itemize}
 
-\subsection{Planning detailler}
+\subsection{Planning détaillé}
 
-Le projet suit le planning imposé par l'encadrement. Les livrables ci-dessous sont spécialisés pour le sujet « base d'exercices + systeme d'entraînement ».
+Le projet suit le planning imposé par l'encadrement. Les livrables ci-dessous sont spécialisés pour le sujet « base d'exercices + système d'entraînement ».
 
 \begin{table}[H]
 \centering
@@ -488,31 +418,31 @@ Le projet suit le planning imposé par l'encadrement. Les livrables ci-dessous s
 \hline
 14 janvier 2026 &
 Réunion client / responsable pédagogique &
-compréhension du besoin, attentes de démo, contraintes, décisions d'orientation (2 dépôts), identification des risques (exécution de code, Grader). \\
+Compréhension du besoin, attentes de démo, contraintes, décisions d'orientation (2 dépôts), identification des risques (exécution de code, Grader). \\
 \hline
 28 janvier 2026 &
 Livraison cahier des charges &
-fonctionnalités, user stories, structure d'un exercice, contrat YAML (v0), critères de validation, contraintes, risques, planning (aligné V0--V3--final). \\
+Fonctionnalités, user stories, structure d'un exercice, contrat YAML (v0), critères de validation, contraintes, risques, planning (aligné V0--V3--final). \\
 \hline
 04 février 2026 (1 semaine) &
 Validation / révision CdC + livraison V0 (« Hello World ») &
-installation base et lister les exercices de cette base et ajoute d'un exercice, 1er version de métadonnées d'exercices et yaml, plus nettoyage. \\
+Installation de la base, listing des exercices, ajout d'un exercice, 1re version de métadonnées d'exercices et YAML, plus nettoyage. \\
 \hline
 25 février 2026 (3 semaines) &
 Livraison partielle V1 / démo &
-compilation/execution/test avec grader (traitement des cas simple et cas d'exam avec dependance entre les exercices et fonctions) d'un exercice, controle time. \\
+Compilation / exécution / test avec Grader (traitement des cas simples et cas d'examens avec dépendance entre les exercices et fonctions), contrôle du temps. \\
 \hline
 01 mars 2026 (1 semaine) &
 Livraison partielle V2 / démo &
-time out pour execution et affichage des erreurs (compilation ou pendant l'execution, \ldots). \\
+Timeout pour l'exécution et affichage des erreurs (compilation ou pendant l'exécution, \ldots). \\
 \hline
 22 avril 2026 (7 semaines) &
 Livraison partielle V3 / démo &
-profile d'utilisateur et utilisation LLM pour proposer les exercices selon niveau et souhaite d'utilisateur + generaliser les langues (java, \ldots) + une interface web (facultatif). \\
+Profil d'utilisateur et utilisation de LLM pour proposer les exercices selon le niveau et les souhaits de l'utilisateur + généraliser les langages (Java, \ldots) + une interface web (facultatif). \\
 \hline
 13 mai 2026 (3 semaines) &
 Livraison finale, démo, présentation et bilan &
-finaliser et une version stable avec les tests et rapport et documentation. \\
+Finalisation et version stable avec les tests, rapport et documentation. \\
 \hline
 \end{tabular}
 \end{table}
@@ -522,8 +452,8 @@ finaliser et une version stable avec les tests et rapport et documentation. \\
 La validation s'appuie sur :
 \begin{itemize}
     \item \textbf{Tests unitaires} sur les modules Python (parsing YAML, gestion chemins, runner d'exécution).
-    \item \textbf{Tests d'intégration} (scénarios CLI complets) : install → ls → add → execute → stats.
-    \item \textbf{Jeu d'exercices minimal} couvrant : IO simple, comparaison référence, timeout, compilation échouée, exécution non-terminante.
+    \item \textbf{Tests d'intégration} (scénarios CLI complets) : install $\rightarrow$ ls $\rightarrow$ add $\rightarrow$ execute $\rightarrow$ stats.
+    \item \textbf{Jeu d'exercices minimal} couvrant : IO simple, comparaison référence, timeout, compilation échouée, exécution non terminante.
 
 \end{itemize}
 
@@ -532,21 +462,21 @@ La validation s'appuie sur :
 \subsection{Risques techniques}
 
 \begin{itemize}
-    \item exécution de code utilisateur (boucles infinies, programmes trop lents, consommation CPU/mémoire) : risque de blocage du système: arrêt forcé du processus...
-    \item compilation (gcc, versions différentes, flags, dépendances) : erreurs non reproductibles selon machines : dépendances minimales, vérification à l'installation, messages d'erreur clairs.
-    \item métadonnées YAML incorrectes (champs manquants, format invalide) : crash ou comportement incohérent : validation au chargement + valeurs par défaut + commande \texttt{trainer validate}.
-    \item tests non fiables (cas limites oubliés, sorties dépendantes de l'environnement) : faux positifs/faux négatifs : base de tests minimale au début, puis automatisation, reproductibilité (seed) pour Grader.
-    \item gestion Git (dépôt indisponible, conflit, mise à jour cassée) : base non installable : commandes robustes, messages de récupération, versionnement/release du dépôt d'exercices.
+    \item \textbf{Exécution de code utilisateur} (boucles infinies, programmes trop lents, consommation CPU/mémoire) : Risque de blocage du système : arrêt forcé du processus.
+    \item \textbf{Compilation} (gcc, versions différentes, flags, dépendances) : Erreurs non reproductibles selon les machines : dépendances minimales, vérification à l'installation, messages d'erreur clairs.
+    \item \textbf{Métadonnées YAML incorrectes} (champs manquants, format invalide) : Crash ou comportement incohérent : validation au chargement + valeurs par défaut + commande \texttt{trainer validate}.
+    \item \textbf{Tests non fiables} (cas limites oubliés, sorties dépendantes de l'environnement) : Faux positifs/faux négatifs : base de tests minimale au début, puis automatisation, reproductibilité (seed) pour Grader.
+    \item \textbf{Gestion Git} (dépôt indisponible, conflit, mise à jour cassée) : Base non installable : commandes robustes, messages de récupération, versionnement/release du dépôt d'exercices.
 \end{itemize}
 
 \subsection{Limites (hors périmètre ou acceptées)}
 
 \begin{itemize}
-    \item pas d'objectif anti-triche : l'utilisateur peut utiliser Internet/IA, le système reste un outil d'entraînement.
-    \item sécurité non garantie à 100\% : exécution locale, pas de sandbox complète, seulement des protections minimales (timeout, isolation workspace).
-    \item support multi-OS non prioritaire : Linux standard ciblé, extension possible plus tard.
-    \item recommandations avancées par LLM : optionnel, dépend des performances et du temps restant, au mieux POC.
-    \item support Java + interface web : optionnel/facultatif, dépend du temps restant après stabilisation du coeur du système.
+    \item Pas d'objectif anti-triche : l'utilisateur peut utiliser Internet/IA, le système reste un outil d'entraînement.
+    \item Sécurité non garantie à 100 \% : exécution locale, pas de sandbox complète, seulement des protections minimales (timeout, isolation workspace).
+    \item Support multi-OS non prioritaire : Linux standard ciblé, extension possible plus tard.
+    \item Recommandations avancées par LLM : optionnel, dépend des performances et du temps restant, au mieux POC.
+    \item Support Java + interface web : optionnel/facultatif, dépend du temps restant après stabilisation du cœur du système.
 \end{itemize}
 
 
