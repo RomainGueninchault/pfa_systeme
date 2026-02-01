@@ -1,0 +1,9 @@
+Comment installer un dépot ? Chercher sur internet, liste dispo ?
+Renommer les dépots ? URL = chiant
+Si on installe plusieurs dépots et que deux exos ont le meme nom ?
+Notion du temps : affichage ? Arret ? Pb de distribution, portabilité.
+Dépendences systèmes dans les fichiers yaml ( google test, valgrind, gdb...), quitte à ce que l'outil explique que le système est pas à jour.
+Pas de sur-architecture, rester à l'essentiel
+Utilsateur peut donner on nom repertoire ( si il ne donne pas le système crée et l'affiche à l'utilisateur). Doit être vide
+prepare : se fait dans un répertoire annexe et ensuite "distribute" copie dans le répertoire de travail de l'utilisateur.
+Créer un shell ?
