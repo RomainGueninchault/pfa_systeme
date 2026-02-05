@@ -457,7 +457,8 @@ La validation s'appuie sur :
 \subsection{Risques techniques}
 
 \begin{itemize}
-    \item \textbf{Exécution de code utilisateur} (boucles infinies, programmes trop lents, consommation CPU/mémoire) : Risque de blocage du système : arrêt forcé du processus.
+    \item \textbf{Complexité de création d'exercices} (structure, métadonnées, tests) : Si la procédure de création d'un exercice est jugée trop complexe ou contraignante, les utilisateurs risquent de préférer ne pas utiliser le système et de travailler en dehors de celui-ci.
+    \item \textbf{Exécution de code utilisateur} (programmes trop lents, consommation CPU/mémoire) : Risque de blocage du système : arrêt forcé du processus.
     \item \textbf{Compilation} (gcc, versions différentes, flags, dépendances) : Erreurs non reproductibles selon les machines : dépendances minimales, vérification à l'installation, messages d'erreur clairs.
     \item \textbf{Métadonnées YAML incorrectes} (champs manquants, format invalide) : Crash ou comportement incohérent : validation au chargement + valeurs par défaut + commande \texttt{trainer validate}.
     \item \textbf{Tests non fiables} (cas limites oubliés, sorties dépendantes de l'environnement) : Faux positifs/faux négatifs : base de tests minimale au début, puis automatisation, reproductibilité (seed) pour Grader.
