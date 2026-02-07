@@ -145,7 +145,7 @@ Le système permet l'installation et la gestion locale d'une base d'exercices. U
 
 Une fois l'exercice ajouté, l'utilisateur peut compiler son code directement depuis l'outil. La compilation utilise les paramètres définis dans les métadonnées de l'exercice et affiche de manière claire les erreurs et avertissements éventuels. Lorsque la compilation réussit, le système permet l'exécution automatique des tests associés à l'exercice.
 
-Les tests sont exécutés localement et comparent la sortie du programme de l'utilisateur avec les résultats attendus ou avec une solution de référence. Le système fournit un retour détaillé indiquant les tests réussis et échoués, ainsi qu'un résumé global permettant de déterminer si l'exercice est validé. En cas d'échec, les différences entre les sorties sont présentées de manière explicite afin d'aider l'utilisateur à comprendre ses erreurs. Pour éviter les blocages liés aux boucles infinies ou aux programmes excessivement lents, le système impose des limites de temps d'exécution (timeouts) configurables selon le type d'exercice.
+Les tests sont exécutés localement et comparent la sortie du programme de l'utilisateur avec les résultats attendus ou avec une solution de référence. Le système fournit un retour détaillé indiquant les tests réussis et échoués, ainsi qu'un résumé global permettant de déterminer si l'exercice est validé. En cas d'échec, les différences entre les sorties sont présentées de manière explicite afin d'aider l'utilisateur à comprendre ses erreurs.
 
 Le système mesure le temps de résolution d'un exercice, depuis son ajout au répertoire de travail jusqu'à la validation complète des tests. Ces informations sont enregistrées localement de manière fiable et peuvent être consultées ultérieurement afin de permettre à l'utilisateur de suivre sa progression. À terme, ces données pourront servir de base à un système de recommandation d'exercices adaptés, proposant des défis en fonction du niveau estimé de l'utilisateur, de sa progression, de ses taux de réussite et des difficultés rencontrées.
 
@@ -157,7 +157,7 @@ Le système mesure le temps de résolution d'un exercice, depuis son ajout au r�
 
 Les exercices doivent être résolus et évalués localement sur la machine de l'utilisateur. Le système ne repose pas sur une infrastructure distante obligatoire pour la compilation ou l'exécution des programmes, afin de garantir son autonomie et sa portabilité.
 
-Chaque exercice respecte une structure standardisée comprenant un énoncé, des fichiers de travail, des tests et des métadonnées. Cette organisation uniforme permet au système de charger, compiler et tester les exercices de manière automatisée et cohérente.
+Du point de vue du système, chaque exercice doit être organisé selon une structure standardisée : énoncé, fichiers de travail, tests et métadonnées. Cette uniformité permet au système d'automatiser le chargement, la compilation et l'exécution des tests de façon fiable et cohérente, tout en garantissant que le couplage entre le système et la structure des exercices reste aussi faible que possible. Ainsi, l'évolution de la structure ou l'ajout de nouveaux champs dans les métadonnées ne doit pas nécessiter de modifications majeures du système.
 
 Le système gère un répertoire de travail isolé pour l'utilisateur. Les fichiers du dépôt d'exercices ne sont jamais modifiés directement, ce qui permet de réinitialiser un exercice ou d'en recommencer un autre sans altérer la base initiale.
 
@@ -174,8 +174,6 @@ Le système doit fonctionner sur un environnement Linux standard. Une compatibil
 L'installation et l'utilisation de l'outil doivent rester simples. L'objectif est de permettre à un utilisateur de commencer à s'entraîner rapidement, à l'aide d'une installation minimale et d'une interface en ligne de commande intuitive.
 
 Le système doit être robuste face aux erreurs courantes, telles que les erreurs de compilation, les fichiers manquants ou les mauvaises configurations. Les messages d'erreur doivent être explicites et permettre à l'utilisateur de comprendre rapidement l'origine du problème.
-
-Afin d'éviter les blocages, le système intègre des mécanismes de limitation du temps d'exécution. Les programmes dont l'exécution dépasse une durée raisonnable sont automatiquement interrompus et un message informe l'utilisateur de cette interruption.
 
 Les performances doivent rester suffisantes pour garantir une utilisation fluide. Les tests simples doivent produire un retour rapide, permettant à l'utilisateur d'enchaîner les itérations sans latence excessive.
 
@@ -199,11 +197,11 @@ exo_nom/
  |-- README.md
  |-- config.yaml
  |-- src/
- |   `-- main.c
+ |   |-- main.c
  |-- tests/
      |-- input1.txt
      |-- output1.txt
-     `-- ...
+     |-- ...
 \end{verbatim}
 
 \subsection{Métadonnées attendues}
@@ -303,21 +301,18 @@ Chaque exercice doit respecter une structure standardisée avec un fichier de m�
 
 Le système doit valider le format du fichier YAML au chargement de l'exercice et afficher un message d'erreur explicite en cas de non-conformité. Un template de fichier YAML doit être fourni comme exemple de référence.
 
+Cependant, le couplage entre les métadonnées et la structure des exercices doit rester flexible pour permettre l'ajout de nouveaux champs ou de nouvelles fonctionnalités sans nécessiter une refonte complète du système.
+
 \subsubsection{Support du langage C}
 
 Le système doit fonctionner de manière complète et fiable pour les exercices en langage C. La compilation doit utiliser les paramètres standard (gcc ou clang) et les tests doivent pouvoir comparer les sorties avec une solution de référence ou avec des résultats attendus prédéfinis.
 
 \subsection{Critères importants (Should have)}
 
-\subsubsection{Gestion des timeouts}
+\subsubsection{Gestion du timeout}
 
-Le système doit implémenter deux types de gestion du temps :
+Le système doit pouvoir utiliser temps de résolution recommandé, défini dans les métadonnées de chaque exercice. Si ce temps est dépassé, un avertissement doit être affiché à l'utilisateur pour l'informer qu'il dépasse le temps attendu, sans pour autant bloquer sa progression. Ce mécanisme sert de point de repère pédagogique.
 
-\begin{itemize}
-    \item \textbf{Timeout de résolution} : Le système doit pouvoir définir un temps de résolution recommandé pour chaque exercice dans les métadonnées. Si ce temps est dépassé, un avertissement doit être affiché à l'utilisateur pour l'informer qu'il dépasse le temps attendu, sans pour autant bloquer sa progression. Ce mécanisme sert de point de repère pédagogique.
-    
-    \item \textbf{Timeout d'exécution} : Pour éviter les blocages liés aux boucles infinies ou aux programmes trop lents, le système doit imposer une limite maximale de temps d'exécution pour chaque test. Si cette limite est atteinte, le programme doit être automatiquement interrompu et un message clair doit informer l'utilisateur de cette interruption.
-\end{itemize}
 
 \subsubsection{Mesure du temps de résolution}
 
@@ -463,7 +458,8 @@ La validation s'appuie sur :
 \subsection{Risques techniques}
 
 \begin{itemize}
-    \item \textbf{Exécution de code utilisateur} (boucles infinies, programmes trop lents, consommation CPU/mémoire) : Risque de blocage du système : arrêt forcé du processus.
+    \item \textbf{Complexité de création d'exercices} (structure, métadonnées, tests) : Si la procédure de création d'un exercice est jugée trop complexe ou contraignante, les utilisateurs risquent de préférer ne pas utiliser le système et de travailler en dehors de celui-ci.
+    \item \textbf{Exécution de code utilisateur} (programmes trop lents, consommation CPU/mémoire) : Risque de blocage du système : arrêt forcé du processus.
     \item \textbf{Compilation} (gcc, versions différentes, flags, dépendances) : Erreurs non reproductibles selon les machines : dépendances minimales, vérification à l'installation, messages d'erreur clairs.
     \item \textbf{Métadonnées YAML incorrectes} (champs manquants, format invalide) : Crash ou comportement incohérent : validation au chargement + valeurs par défaut + commande \texttt{trainer validate}.
     \item \textbf{Tests non fiables} (cas limites oubliés, sorties dépendantes de l'environnement) : Faux positifs/faux négatifs : base de tests minimale au début, puis automatisation, reproductibilité (seed) pour Grader.
