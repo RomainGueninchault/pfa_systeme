@@ -1,0 +1,14 @@
+En tant qu'utilisateur :
+
+1. Je telecharge le trainer + pip install
+2. Je fais trainer pour savoir quoi faire
+3. trainer import "url"
+4. Je veux lister mes exercices
+5. Je veux pouvoir installer rapidement un exercice et me lancer dessus
+6. Je veux pouvoir vérifier si ma solution est juste
+7. Quand ma solution est juste je veux pouvoir re-regarder l'exercice, passer a un suivant, ou m'arreter
+8. Quand je quitte, je veux que les répertoires crées soient supprimés
+
+En tant qu'admin :
+
+1. Quand un utilisateur a fini un exercice, je veux pouvoir garder un état de son avancement pour, par la suite, pouvoir lui proposer des exercices adaptés a son niveau

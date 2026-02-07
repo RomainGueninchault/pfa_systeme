@@ -1,0 +1,9 @@
+
+trainer ou trainer -h : description de toutes les commandes
+
+trainer ls : liste les exercices d'un dépot avec leur description + tags
+trainer import "url": installe un repertoire d'exercice
+trainer update: met a jour tous les répertoires
+trainer do "ex" "dir": prépare un répertoire de travail, y copie l'exercice, execute le "prepare" du fichier yaml, lance le timer
+trainer check : execute le "compile" et le "execute" du fichier yaml
+trainer config: print configuration

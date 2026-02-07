@@ -1,0 +1,17 @@
+#Ce qu'on doit trouver dans les yaml lors d'une recherche recursive jusqu'à un exercice (obligatoirement)
+#Si un descripteur est trouvé deux fois, on garde celui au plus bas niveau en écrasant celui du dessus
+
+
+author:
+langage:
+module:				
+description:		# Description affichée lors du ls
+tags:			#Tags pour décrire un exercice ( difficulté, type...)
+timeout:		#Duree en minute pour resoudre l'exercice
+distributes:		# Fichiers copiés dans le répertoire de l'utilisateur
+commands:		
+	prepare:	#Executé lors de l'installation de l'exercice
+	validate:	#Compilation(optionelle)+Execution + Test
+	clean:		#Executé lorsque l'utilisateur quitte
+
+
