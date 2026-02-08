@@ -191,27 +191,37 @@ Enfin, l'architecture globale du système doit être pensée de manière extensi
 \end{itemize}
 
 \subsection{Structure minimale d’un exercice}
+Un exemple de la structure de la base de données, mais l’important, c’est d’avoir un couplage minimal entre le système et la base de données.
 
 \begin{verbatim}
 exo_nom/
- |-- README.md
  |-- config.yaml
- |-- src/
- |   |-- main.c
- |-- tests/
-     |-- input1.txt
-     |-- output1.txt
-     |-- ...
+ |-- Base1/
+     |-- main.c(ou autre language)
+     |-- config.yaml
+     |-- Makefile(ou equivalence)
+     |-- test.c
+ |-- Base2/
+     |-- Base3
+         |-- sum.py
+         ...
 \end{verbatim}
 
 \subsection{Métadonnées attendues}
 
 \begin{itemize}
-    \item Identifiant unique de l’exercice
-    \item Langage (C initialement)
-    \item Niveau estimé (débutant, intermédiaire, avancé)
-    \item Notions (boucles, tableaux, pointeurs, etc.)
-    \item Temps estimé de résolution
+\item  author
+\item  langage
+\item  module				
+\item  description		\# Description affichée lors du ls
+\item  tags			    \#Tags pour décrire un exercice ( difficulté, type...)
+\item  timeout		    \#Duree en minute pour resoudre l'exercice
+\item  distributes:		\# Fichiers copiés dans le répertoire de l'utilisateur
+\item  commands:		
+\item  prepare 	        \#Executé lors de l'installation de l'exercice
+\item  validate 	    \#Compilation(optionelle)+Execution + Test
+\item	clean 		    \#Executé lorsque l'utilisateur quitte
+\item
 \end{itemize}
 
 \section{Livrables}
@@ -269,7 +279,7 @@ Le projet sera considéré comme validé si l'ensemble des critères suivants so
 
 \subsubsection{Installation et configuration}
 
-Le système doit pouvoir être installé sur une machine Linux standard en une seule commande ou via un script d'installation simple. L'installation doit créer correctement l'ensemble de la structure de répertoires nécessaire et vérifier la présence des dépendances requises. Un message de confirmation doit indiquer le succès de l'installation.
+Le système doit pouvoir être installé sur une machine Linux standard via pip. L'installation doit créer correctement l'ensemble de la structure de répertoires nécessaire et vérifier la présence des dépendances requises. Un message de confirmation doit indiquer le succès de l'installation.
 
 La base d'exercices doit pouvoir être installée de manière autonome et sans connexion à un serveur distant après le premier téléchargement. L'utilisateur doit pouvoir vérifier que l'installation s'est déroulée correctement via une commande dédiée.
 
@@ -289,7 +299,7 @@ L'utilisateur doit pouvoir nettoyer son répertoire de travail via une commande 
 
 \subsubsection{Compilation et exécution}
 
-Le système doit permettre de compiler le code de l'utilisateur en utilisant les paramètres définis dans le fichier de métadonnées de l'exercice. Les erreurs et avertissements de compilation doivent être affichés de manière claire et lisible.
+Le deroulement de l'exercice sera dans un nouvelle SHELL. Le système doit permettre de compiler le code de l'utilisateur en utilisant les paramètres définis dans le fichier de métadonnées de l'exercice. Les erreurs et avertissements de compilation doivent être affichés de manière claire et lisible.
 
 Une fois la compilation réussie, le système doit permettre l'exécution automatique de l'ensemble des tests associés à l'exercice. Les résultats des tests doivent indiquer explicitement quels tests ont réussi et lesquels ont échoué.
 
@@ -303,9 +313,6 @@ Le système doit valider le format du fichier YAML au chargement de l'exercice e
 
 Cependant, le couplage entre les métadonnées et la structure des exercices doit rester flexible pour permettre l'ajout de nouveaux champs ou de nouvelles fonctionnalités sans nécessiter une refonte complète du système.
 
-\subsubsection{Support du langage C}
-
-Le système doit fonctionner de manière complète et fiable pour les exercices en langage C. La compilation doit utiliser les paramètres standard (gcc ou clang) et les tests doivent pouvoir comparer les sorties avec une solution de référence ou avec des résultats attendus prédéfinis.
 
 \subsection{Critères importants (Should have)}
 
@@ -320,11 +327,6 @@ Le système doit enregistrer le temps de résolution de chaque exercice, depuis 
 
 Ces informations doivent être sauvegardées localement dans un format exploitable (par exemple JSON ou base de données SQLite) avec la date et l'heure de début et de fin. L'utilisateur doit pouvoir consulter son historique de temps via une commande dédiée, permettant ainsi de suivre sa progression au fil du temps.
 
-\subsubsection{Organisation par langage}
-
-Les exercices doivent être organisés dans des sous-répertoires selon leur langage de programmation (par exemple \texttt{/exercices/c/}, \texttt{/exercices/java/}). Le système doit détecter automatiquement le langage d'un exercice en fonction de son emplacement ou de ses métadonnées.
-
-La commande de listage des exercices doit permettre de filtrer les résultats par langage de programmation afin de faciliter la navigation dans une base d'exercices multi-langages.
 
 \subsubsection{Intégration de la bibliothèque Grader}
 
