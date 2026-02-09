@@ -125,7 +125,7 @@ L’entraînement à la programmation représente aujourd’hui une difficulté 
 
 \subsection{Objectifs primaires}
 
-Le but de notre système est de faciliter cette tâche à travers la mise à disposition de dépôts d’exercices couvrant les principales notions du langage C dans un premier temps (avec la possibilité d’étendre ensuite à d’autres langages). Ces exercices seront adaptés à tous les niveaux, et la plateforme accompagnera l’utilisateur dans leur résolution en proposant une correction de référence, ainsi qu’une analyse des erreurs présentes dans la solution soumise, en mettant notamment en évidence les cas limites et les points à améliorer.
+Le but de notre système est de proposer un environnement de travail à un utilisateur afin que celui-ci puisse réaliser des exercices contenus dans un dépôt git choisi par ses soins. Le système devra pouvoir s'adapter à n'importe quelle structure de dépôt, bien que les dépôts doivent répondre à quelques critères spécifiques notamment sur le contenu des fichiers \textit{.yaml}.
 
 \subsection{Objectifs secondaires}
 
@@ -157,13 +157,11 @@ Le système mesure le temps de résolution d'un exercice, depuis son ajout au r�
 
 Les exercices doivent être résolus et évalués localement sur la machine de l'utilisateur. Le système ne repose pas sur une infrastructure distante obligatoire pour la compilation ou l'exécution des programmes, afin de garantir son autonomie et sa portabilité.
 
-Du point de vue du système, chaque exercice doit être organisé selon une structure standardisée : énoncé, fichiers de travail, tests et métadonnées. Cette uniformité permet au système d'automatiser le chargement, la compilation et l'exécution des tests de façon fiable et cohérente, tout en garantissant que le couplage entre le système et la structure des exercices reste aussi faible que possible. Ainsi, l'évolution de la structure ou l'ajout de nouveaux champs dans les métadonnées ne doit pas nécessiter de modifications majeures du système.
+D'un point de vue système, la base d'exercice doit contenir les informations nécessaires pour pouvoir installer, compiler et tester un exercice sur la machine de l'utilisateur. Le système ne requiert pas de compilateur ou de manière d’exécuter les tests particuliers ; il doit pouvoir s'adapter à la façon dont les personnes écrivant les exercices veulent faire compiler et exécuter ceux-ci.
 
 Le système gère un répertoire de travail isolé pour l'utilisateur. Les fichiers du dépôt d'exercices ne sont jamais modifiés directement, ce qui permet de réinitialiser un exercice ou d'en recommencer un autre sans altérer la base initiale.
 
-Lors de l'exécution des tests, le système fournit un retour clair et exploitable. Les résultats indiquent explicitement si un test a réussi ou échoué, et mettent en évidence les écarts entre la sortie obtenue et la sortie attendue. Ces informations doivent être compréhensibles sans analyse technique approfondie.
-
-Dans sa version initiale, le système prend en charge le langage C. Toutefois, son architecture doit rester extensible afin de permettre l'ajout ultérieur d'autres langages de programmation sans remise en cause de la structure existante.
+Lors de l'exécution des tests, le système fournit un retour clair et exploitable. Les résultats indiquent explicitement si un test a réussi ou échoué.
 
 Le temps de résolution des exercices doit être mesuré de manière cohérente et fiable. Le système enregistre le moment où l'utilisateur commence à travailler sur un exercice et celui où il le valide complètement, permettant ainsi un suivi précis de la progression et servant de base à d'éventuelles recommandations personnalisées.
 
@@ -177,35 +175,14 @@ Le système doit être robuste face aux erreurs courantes, telles que les erreur
 
 Les performances doivent rester suffisantes pour garantir une utilisation fluide. Les tests simples doivent produire un retour rapide, permettant à l'utilisateur d'enchaîner les itérations sans latence excessive.
 
-Les retours fournis à l'utilisateur doivent être lisibles et bien structurés. L'utilisation de couleurs pour différencier succès et échecs, de résumés synthétiques et de détails optionnels consultables à la demande permet de rendre l'information exploitable sans surcharge visuelle.
+Les retours fournis à l'utilisateur doivent être lisibles et bien structurés. L'utilisation de couleurs pour différencier les succès et les échecs, ainsi que des résumés synthétiques et des détails optionnels consultables à la demande, permet de rendre l'information exploitable sans surcharge visuelle.
 
 Enfin, l'architecture globale du système doit être pensée de manière extensible, afin de faciliter l'ajout de nouveaux exercices, de nouveaux tests ou de nouvelles fonctionnalités sans nécessiter une refonte complète.
 
 
 \section{Organisation des exercices}
 
-\begin{itemize}
-    \item Un exercice est stocké dans un répertoire dédié et respecte une structure commune.
-    \item Chaque exercice contient un énoncé, un ou plusieurs fichiers de travail, des tests, et des métadonnées.
-    \item Le système doit pouvoir ajouter facilement un nouvel exercice en respectant cette structure.
-\end{itemize}
-
-\subsection{Structure minimale d’un exercice}
-Un exemple de la structure de la base de données, mais l’important, c’est d’avoir un couplage minimal entre le système et la base de données.
-
-\begin{verbatim}
-exo_nom/
- |-- config.yaml
- |-- Base1/
-     |-- main.c(ou autre language)
-     |-- config.yaml
-     |-- Makefile(ou equivalence)
-     |-- test.c
- |-- Base2/
-     |-- Base3
-         |-- sum.py
-         ...
-\end{verbatim}
+Les dépôts d'exercices auront une configuration minimale requise pour pouvoir fonctionner avec le système. Ils pourront contenir différents fichiers \textit{.yaml} contenant les métadonnées nécessaires au fonctionnement d'un exercice. Ces fichiers \textit{.yaml} seront lus récursivement et les informations les plus hautes seront supprimées au profit des données les plus basses si réécrites.
 
 \subsection{Métadonnées attendues}
 
@@ -234,17 +211,11 @@ Le projet donnera lieu à la production des éléments suivants, organisés selo
 
 Le système sera livré sous la forme d'un outil en ligne de commande fonctionnel, accompagné de l'ensemble de son code source. L'application devra être installable via un script ou une commande simple, et utilisable immédiatement après installation sur un environnement Linux standard.
 
-Le code source comprendra l'ensemble des modules nécessaires au fonctionnement du système : gestion des exercices, compilation, exécution des tests, mesure du temps, affichage des résultats. L'architecture devra être modulaire et extensible, permettant l'ajout futur de nouvelles fonctionnalités ou de nouveaux langages de programmation.
+Le code source comprendra l'ensemble des modules nécessaires au fonctionnement du système : gestion des exercices, mesure du temps, affichage des résultats.
 
 \subsubsection{Base d'exercices}
 
-Une base d'exercices sera fournie, structurée selon le format standardisé défini dans les contraintes fonctionnelles. Cette base contiendra un ensemble minimal d'exercices en langage C, couvrant différents niveaux de difficulté et différents concepts de programmation.
-
-Chaque exercice sera composé d'un énoncé, de fichiers sources à compléter, de tests automatisés et d'un fichier de métadonnées au format YAML décrivant les paramètres de compilation, d'exécution et de validation. Une solution de référence pourra être fournie pour permettre la comparaison automatique des résultats.
-
-\subsubsection{Bibliothèque de tests}
-
-L'intégration de la bibliothèque Grader, développée par M. Morandat, permettra d'automatiser la génération et l'exécution des tests pour les exercices en langage C. Cette bibliothèque sera documentée et configurée pour être utilisable directement par le système.
+Une base d'exercices sera fournie, donnant un exemple aux personnes voulant écrire des exercices de manière simple comme compliquée. Elle présentera un exemple d'architecture des fichiers \textit{.yaml} ainsi que différentes manière de compiler des exercices et d'exécuter des tests.
 
 \subsection{Documentation}
 
@@ -256,7 +227,6 @@ Un guide complet destiné aux utilisateurs finaux (étudiants) sera fourni. Ce g
     \item Un tutoriel de démarrage rapide expliquant l'installation et la première utilisation ;
     \item Une description détaillée de toutes les commandes disponibles avec leur syntaxe et des exemples d'utilisation ;
     \item Une section FAQ répondant aux problèmes courants ;
-    \item Des conseils d'utilisation et des bonnes pratiques pour progresser efficacement.
 \end{itemize}
 
 \subsubsection{Documentation technique}
@@ -267,8 +237,6 @@ Une documentation technique sera produite à destination des développeurs et de
     \item L'architecture globale du système et l'explication des différents modules ;
     \item Le format complet du fichier YAML de métadonnées avec tous les champs disponibles ;
     \item Un guide de création d'exercices avec des templates et des exemples commentés ;
-    \item Les spécifications techniques pour l'ajout de nouveaux langages de programmation ;
-    \item La documentation de l'API interne et des points d'extension du système.
 \end{itemize}
 
 \section{Critères de validation}
@@ -281,7 +249,9 @@ Le projet sera considéré comme validé si l'ensemble des critères suivants so
 
 Le système doit pouvoir être installé sur une machine Linux standard via pip. L'installation doit créer correctement l'ensemble de la structure de répertoires nécessaire et vérifier la présence des dépendances requises. Un message de confirmation doit indiquer le succès de l'installation.
 
-La base d'exercices doit pouvoir être installée de manière autonome et sans connexion à un serveur distant après le premier téléchargement. L'utilisateur doit pouvoir vérifier que l'installation s'est déroulée correctement via une commande dédiée.
+\subsubsection{Installation d'une base d'exercices}
+
+Le système doit permettre à l'utilisateur d'ajouter une base d'exercice à son répertoire de travail à partir de son URL de dépôt. Il doit aussi permettre à l'utilisateur de mettre àjour cette base d'exercice à n'importe quel moment.
 
 \subsubsection{Consultation des exercices}
 
@@ -289,9 +259,9 @@ L'utilisateur doit pouvoir afficher la liste complète des exercices disponibles
 
 Si la liste est trop longue, un système de pagination doit être mis en place pour éviter la saturation de l'affichage terminal. L'utilisateur doit également pouvoir accéder à une aide détaillant toutes les commandes disponibles avec leur syntaxe et des exemples d'utilisation.
 
-\subsubsection{Gestion du répertoire de travail}
+\subsubsection{Installation d'un exercice}
 
-Le système doit permettre d'ajouter un exercice à un répertoire de travail de l'utilisateur. Cette opération doit copier tous les fichiers nécessaires (énoncé, fichiers sources, métadonnées) sans modifier le dépôt d'exercices d'origine.
+Cette opération doit copier tous les fichiers nécessaires (énoncé, fichiers sources, métadonnées) sans modifier le dépôt d'exercices d'origine.
 
 Le système doit vérifier que le répertoire de destination est vide avant d'y copier l'exercice et afficher un message d'erreur clair dans le cas contraire. Une fois l'exercice copié, les tests doivent être automatiquement compilés et le code source de la solution de référence doit être supprimé pour éviter toute tentation de consultation prématurée.
 
@@ -299,40 +269,17 @@ L'utilisateur doit pouvoir nettoyer son répertoire de travail via une commande 
 
 \subsubsection{Compilation et exécution}
 
-Le deroulement de l'exercice sera dans un nouvelle SHELL. Le système doit permettre de compiler le code de l'utilisateur en utilisant les paramètres définis dans le fichier de métadonnées de l'exercice. Les erreurs et avertissements de compilation doivent être affichés de manière claire et lisible.
+Le système doit pouvoir utiliser les commandes de configuration du fichier \textit{.yaml} pour pouvoir compiler, exécuter et tester un exercice.
 
-Une fois la compilation réussie, le système doit permettre l'exécution automatique de l'ensemble des tests associés à l'exercice. Les résultats des tests doivent indiquer explicitement quels tests ont réussi et lesquels ont échoué.
+\subsubsection{Suppression du répertoire de travail}
 
-Un résumé global doit permettre de déterminer rapidement si l'exercice est entièrement validé ou non. En cas d'échec d'un test, les différences entre la sortie obtenue et la sortie attendue doivent être présentées de manière explicite pour aider l'utilisateur à identifier et corriger ses erreurs.
-
-\subsubsection{Format des métadonnées}
-
-Chaque exercice doit respecter une structure standardisée avec un fichier de métadonnées au format YAML. Ce fichier doit contenir au minimum : le langage de programmation, la commande de compilation, la description des tests à exécuter, et les paramètres d'exécution.
-
-Le système doit valider le format du fichier YAML au chargement de l'exercice et afficher un message d'erreur explicite en cas de non-conformité. Un template de fichier YAML doit être fourni comme exemple de référence.
-
-Cependant, le couplage entre les métadonnées et la structure des exercices doit rester flexible pour permettre l'ajout de nouveaux champs ou de nouvelles fonctionnalités sans nécessiter une refonte complète du système.
-
+Le système doit pouvoir supprimer le répertoire de travail tout en faisant attention à ne pas supprimer des données de l'utilisateur.
 
 \subsection{Critères importants (Should have)}
 
 \subsubsection{Gestion du timeout}
 
 Le système doit pouvoir utiliser temps de résolution recommandé, défini dans les métadonnées de chaque exercice. Si ce temps est dépassé, un avertissement doit être affiché à l'utilisateur pour l'informer qu'il dépasse le temps attendu, sans pour autant bloquer sa progression. Ce mécanisme sert de point de repère pédagogique.
-
-
-\subsubsection{Mesure du temps de résolution}
-
-Le système doit enregistrer le temps de résolution de chaque exercice, depuis le moment où l'exercice est ajouté au répertoire de travail jusqu'au moment où tous les tests sont validés avec succès.
-
-Ces informations doivent être sauvegardées localement dans un format exploitable (par exemple JSON ou base de données SQLite) avec la date et l'heure de début et de fin. L'utilisateur doit pouvoir consulter son historique de temps via une commande dédiée, permettant ainsi de suivre sa progression au fil du temps.
-
-
-\subsubsection{Intégration de la bibliothèque Grader}
-
-La bibliothèque Grader sera intégrée au système pour permettre l'automatisation de la génération et de l'exécution des tests pour les exercices en langage C.
-
-La documentation d'utilisation de cette bibliothèque doit être fournie et les exercices utilisant Grader doivent générer des tests reproductibles et cohérents.
 
 \subsubsection{Gestion robuste des erreurs}
 
@@ -348,31 +295,13 @@ Le système doit permettre de filtrer les exercices selon différents critères 
 
 Les tags doivent être définis dans les métadonnées des exercices et validés par rapport à un schéma centralisé garantissant leur cohérence. Une commande doit permettre de lister tous les tags disponibles et une autre de rechercher des exercices selon plusieurs critères combinés.
 
-\subsubsection{Validation centralisée des tags}
-
-Un fichier de schéma central (\texttt{schema/tags.yaml}) doit définir l'ensemble des tags autorisés pour les exercices. Le système doit valider les tags lors du chargement d'un exercice et afficher un message d'erreur clair si un tag non autorisé est utilisé.
-
-Une documentation doit expliquer comment proposer de nouveaux tags pour enrichir le schéma au fil du temps.
-
 \subsubsection{Recommandation d'exercices}
 
 À partir des données de temps de résolution et de taux de réussite enregistrées, le système peut proposer des exercices adaptés au niveau estimé de l'utilisateur.
 
 Ce système de recommandation peut se baser sur des heuristiques simples (progression linéaire de difficulté) ou sur des algorithmes plus sophistiqués tenant compte des performances passées de l'utilisateur sur différents types d'exercices.
 
-\subsubsection{Support d'autres langages}
-
-Bien que le langage C soit prioritaire, l'architecture du système doit permettre l'ajout ultérieur d'autres langages de programmation (Java, Python, Rust, etc.) sans nécessiter de refonte majeure.
-
-L'ajout d'un nouveau langage doit se faire en définissant les paramètres de compilation et d'exécution spécifiques dans les métadonnées et en ajoutant les exercices correspondants dans un sous-répertoire dédié.
-
 \subsection{Critères de qualité transverses}
-
-\subsubsection{Performance}
-
-L'exécution des tests pour un exercice simple doit produire un retour en moins de 5 secondes sur une machine standard. Le temps de compilation ne doit pas excéder quelques secondes pour du code de taille raisonnable.
-
-Le système doit rester fluide et réactif même en présence d'une base d'exercices contenant plusieurs centaines d'entrées.
 
 \subsubsection{Portabilité}
 
@@ -380,20 +309,13 @@ Le système doit fonctionner sur toute distribution Linux récente disposant des
 
 Une compatibilité avec macOS et Windows pourra être envisagée en fonction du temps disponible, mais n'est pas requise pour la validation du projet.
 
-\subsubsection{Extensibilité}
-
-L'architecture du système doit permettre l'ajout facile de nouvelles fonctionnalités : nouveaux types de tests, nouveaux langages, nouveaux formats de métadonnées, nouvelles commandes.
-
-Le code doit être modulaire, bien commenté et respecter les bonnes pratiques de développement pour faciliter les contributions futures.
-
 \subsubsection{Lisibilité des sorties}
 
 Tous les messages affichés à l'utilisateur doivent être clairs, structurés et exploitables. L'utilisation de couleurs doit permettre de distinguer rapidement les succès des échecs. Les informations détaillées doivent être disponibles sur demande mais ne pas encombrer l'affichage par défaut.
 
 Les résultats de tests doivent être présentés de manière synthétique avec possibilité d'afficher les détails des échecs pour faciliter le débogage.
 
-\section{Planning prévisionnel}
-\subsection{Approche et méthodologie}
+\section{Approche et méthodologie}
 Le développement suivra la méthode agile, centrée sur des livrables fonctionnels utilisables dès les premières itérations. Chaque incrément correspond à un ensemble cohérent de user stories et se termine par une phase de validation (les tests).
 
 La priorisation :
@@ -401,58 +323,6 @@ La priorisation :
     \item \textbf{Priorité Haute} : base opérationnelle (installation, listing, ajout, compilation, exécution de tests simples, gestion d'erreurs).
     \item \textbf{Priorité Moyenne} : timeouts complets, statistiques, intégration Grader, usage de LLM, ...
     \item \textbf{Priorité Basse} : extension Java, version web, ...
-\end{itemize}
-
-\subsection{Planning détaillé}
-
-Le projet suit le planning imposé par l'encadrement. Les livrables ci-dessous sont spécialisés pour le sujet « base d'exercices + système d'entraînement ».
-
-\begin{table}[H]
-\centering
-\renewcommand{\arraystretch}{1.25}
-\begin{tabular}{|p{3.2cm}|p{4.2cm}|p{7.0cm}|}
-\hline
-\textbf{Date} & \textbf{Jalon imposé} & \textbf{Livrables réalistes pour ce projet} \\
-\hline
-14 janvier 2026 &
-Réunion client / responsable pédagogique &
-Compréhension du besoin, attentes de démo, contraintes, décisions d'orientation (2 dépôts), identification des risques (exécution de code, Grader). \\
-\hline
-28 janvier 2026 &
-Livraison cahier des charges &
-Fonctionnalités, user stories, structure d'un exercice, contrat YAML (v0), critères de validation, contraintes, risques, planning (aligné V0--V3--final). \\
-\hline
-04 février 2026 (1 semaine) &
-Validation / révision CdC + livraison V0 (« Hello World ») &
-Installation de la base, listing des exercices, ajout d'un exercice, 1re version de métadonnées d'exercices et YAML, plus nettoyage. \\
-\hline
-25 février 2026 (3 semaines) &
-Livraison partielle V1 / démo &
-Compilation / exécution / test avec Grader (traitement des cas simples et cas d'examens avec dépendance entre les exercices et fonctions), contrôle du temps. \\
-\hline
-01 mars 2026 (1 semaine) &
-Livraison partielle V2 / démo &
-Timeout pour l'exécution et affichage des erreurs (compilation ou pendant l'exécution, \ldots). \\
-\hline
-22 avril 2026 (7 semaines) &
-Livraison partielle V3 / démo &
-Profil d'utilisateur et utilisation de LLM pour proposer les exercices selon le niveau et les souhaits de l'utilisateur + généraliser les langages (Java, \ldots) + une interface web (facultatif). \\
-\hline
-13 mai 2026 (3 semaines) &
-Livraison finale, démo, présentation et bilan &
-Finalisation et version stable avec les tests, rapport et documentation. \\
-\hline
-\end{tabular}
-\end{table}
-
-\subsection{Stratégie de validation}
-
-La validation s'appuie sur :
-\begin{itemize}
-    \item \textbf{Tests unitaires} sur les modules Python (parsing YAML, gestion chemins, runner d'exécution).
-    \item \textbf{Tests d'intégration} (scénarios CLI complets) : install $\rightarrow$ ls $\rightarrow$ add $\rightarrow$ execute $\rightarrow$ stats.
-    \item \textbf{Jeu d'exercices minimal} couvrant : IO simple, comparaison référence, timeout, compilation échouée, exécution non terminante.
-
 \end{itemize}
 
 \section{Risques et limites}
