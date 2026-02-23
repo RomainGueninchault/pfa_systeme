@@ -11,6 +11,8 @@ parser_import.add_argument("--base-dir", default="~/.base")
 parser_install = subparsers.add_parser('install', help="Install an exercice")
 parser_install.add_argument('exs', help="name of exercice")
 
+parser_ls = subparsers.add_parser('ls', help="List exercises in the base directory")
+
 if __name__ == '__main__':
     args = argParser.parse_args()
     print(args)
