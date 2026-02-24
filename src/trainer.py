@@ -3,6 +3,7 @@ from arg import argParser
 from importBase import importRun
 from ls import lsRun
 from install import installExercice
+from check import validateExercice
 
 import os
 import yaml
@@ -21,6 +22,8 @@ def main():
         lsRun(args)
     elif args.cmd == "install":
         installExercice(args.exs, base_dir=args.base_dir, user_dir=args.user_dir)
+    elif args.cmd == "check":
+        validateExercice(user_dir=args.user_dir)
     else:
         argParser.print_help()
 

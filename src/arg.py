@@ -18,6 +18,8 @@ parser_ls = subparsers.add_parser('ls', help="List exercises in the base directo
 parser_ls.add_argument("--base-dir", default="~/.base", help="Base directory for exercises")
 parser_ls.add_argument("--tag", default=None, help="Filter exercises by tag")
 
+parser_check = subparsers.add_parser('check', help="Check an exercice")
+parser_check.add_argument("--user-dir", default=None, help="Directory where the exercice is installed")
 
 if __name__ == '__main__':
     args = argParser.parse_args()
