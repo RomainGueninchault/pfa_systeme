@@ -59,8 +59,7 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
             shutil.rmtree(tmp_dir)
             return
 
-    # Nettoyage : suppression des fichiers non nécessaires (optionnel, à adapter)
-    # Exemple : supprimer les fichiers *.tmp, *.bak, etc.
+    # Nettoyage (fichiers exacts à supprimer à définir)
     for root, dirs, files in os.walk(exo_tmp):
         for file in files:
             if file.endswith('.tmp') or file.endswith('.bak'):
