@@ -2,10 +2,12 @@ import os
 import yaml
 import subprocess
 
-def validateExercice(user_dir):
+def validateExercice(user_dir=None):
     """
     Exécute la commande 'validate' définie dans le config.yml de l'exercice situé dans user_dir.
     """
+    if not user_dir:
+        user_dir = os.getcwd()
     config_path = os.path.join(user_dir, 'config.yml')
     if not os.path.isfile(config_path):
         print(f"config.yml introuvable dans {user_dir}.")

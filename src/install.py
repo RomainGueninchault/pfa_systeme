@@ -4,6 +4,11 @@ import tempfile
 import shutil
 
 def installExercice(exercice_name, base_dir=None, user_dir=None):
+    # Vérification que le dossier utilisateur (ou courant) est vide
+    target_dir = user_dir if user_dir else os.getcwd()
+    if os.path.exists(target_dir) and os.listdir(target_dir):
+        print(f"Le dossier cible '{target_dir}' n'est pas vide. Installation annulée.")
+        return
     """
     Copie un exercice et le dossier commun dans un dossier temporaire, compile, nettoie et copie les fichiers finaux vers le dossier utilisateur.
     """
@@ -36,7 +41,7 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
             break
     if not exo_path:
         print(f"Exercice '{exercice_name}' non trouvé dans {home}.")
-        return
+        return False
 
     # Création du dossier temporaire
     tmp_dir = tempfile.mkdtemp(prefix='trainer_')
@@ -57,28 +62,30 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
         except subprocess.CalledProcessError:
             print(f"La commande de préparation a échoué : {prepare_cmd}")
             shutil.rmtree(tmp_dir)
-            return
+            return False
 
-    # Nettoyage (fichiers exacts à supprimer à définir)
-    for root, dirs, files in os.walk(exo_tmp):
-        for file in files:
-            if file.endswith('.tmp') or file.endswith('.bak'):
-                try:
-                    os.remove(os.path.join(root, file))
-                except Exception:
-                    pass
-
-    # Copie finale vers le dossier utilisateur
-    if user_dir:
-        for item in os.listdir(exo_tmp):
-            s = os.path.join(exo_tmp, item)
-            d = os.path.join(user_dir, item)
-            if os.path.isdir(s):
-                if os.path.exists(d):
-                    shutil.rmtree(d)
-                shutil.copytree(s, d)
-            else:
-                shutil.copy2(s, d)
+    # Copie uniquement les fichiers/dossiers listés dans 'distribute' du config.yml vers le dossier utilisateur
+    if user_dir and config:
+        distribute_files = []
+        if 'distribute' in config:
+            distribute_files = config['distribute']
+            if isinstance(distribute_files, str):
+                distribute_files = [distribute_files]
+        # Toujours ajouter config.yml à la liste à copier
+        if 'config.yml' not in distribute_files:
+            distribute_files.append('config.yml')
+        for rel_path in distribute_files:
+            src_path = os.path.join(exo_tmp, rel_path)
+            # Préserver la structure relative du chemin
+            dest_path = os.path.join(user_dir, rel_path)
+            if os.path.exists(src_path):
+                if os.path.isdir(src_path):
+                    if os.path.exists(dest_path):
+                        shutil.rmtree(dest_path)
+                    shutil.copytree(src_path, dest_path)
+                else:
+                    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+                    shutil.copy2(src_path, dest_path)
         print(f"Exercice prêt dans {user_dir}")
 
     # Nettoyage du dossier temporaire

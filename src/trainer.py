@@ -4,12 +4,12 @@ from importBase import importRun
 from ls import lsRun
 from install import installExercice
 from check import validateExercice
+from timer import start_timer, check_timer_and_report
 
 import os
 import yaml
 import tempfile
 import shutil
-
 
 
 def main():
@@ -21,9 +21,12 @@ def main():
     elif args.cmd == "ls":
         lsRun(args)
     elif args.cmd == "install":
-        installExercice(args.exs, base_dir=args.base_dir, user_dir=args.user_dir)
+        result_install = installExercice(args.exs, base_dir=args.base_dir, user_dir=args.user_dir)
+        if result_install:
+            start_timer(user_dir=args.user_dir)
     elif args.cmd == "check":
-        validateExercice(user_dir=args.user_dir)
+        result=validateExercice(user_dir=args.user_dir)
+        check_timer_and_report(user_dir=args.user_dir, validation_result=result)
     else:
         argParser.print_help()
 
