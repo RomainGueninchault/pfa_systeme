@@ -27,6 +27,8 @@ def main():
     elif args.cmd == "check":
         result=validateExercice(user_dir=args.user_dir)
         check_timer_and_report(user_dir=args.user_dir, validation_result=result)
+    elif args.cmd == "time":
+        check_timer_and_report(user_dir=os.getcwd(), validation_result=None)
     else:
         argParser.print_help()
 

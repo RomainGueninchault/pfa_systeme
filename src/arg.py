@@ -21,6 +21,8 @@ parser_ls.add_argument("--tag", default=None, help="Filter exercises by tag")
 parser_check = subparsers.add_parser('check', help="Check an exercice")
 parser_check.add_argument("--user-dir", default=None, help="Directory where the exercice is installed")
 
+parser_time  = subparsers.add_parser('time', help="Check the time elapsed and the time remaining for the exercice. Must be in the directory of the exercice")
+
 if __name__ == '__main__':
     args = argParser.parse_args()
     print(args)

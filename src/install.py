@@ -64,20 +64,22 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
             shutil.rmtree(tmp_dir)
             return False
 
-    # Copie uniquement les fichiers/dossiers listés dans 'distribute' du config.yml vers le dossier utilisateur
-    if user_dir and config:
+    # Copie uniquement les fichiers/dossiers listés dans 'distribute'/'distributes' du config.yml vers le dossier cible
+    if config:
         distribute_files = []
         if 'distribute' in config:
             distribute_files = config['distribute']
             if isinstance(distribute_files, str):
                 distribute_files = [distribute_files]
-        # Toujours ajouter config.yml à la liste à copier
+        elif 'distributes' in config:
+            distribute_files = config['distributes']
+            if isinstance(distribute_files, str):
+                distribute_files = [distribute_files]
         if 'config.yml' not in distribute_files:
             distribute_files.append('config.yml')
         for rel_path in distribute_files:
             src_path = os.path.join(exo_tmp, rel_path)
-            # Préserver la structure relative du chemin
-            dest_path = os.path.join(user_dir, rel_path)
+            dest_path = os.path.join(target_dir, rel_path)
             if os.path.exists(src_path):
                 if os.path.isdir(src_path):
                     if os.path.exists(dest_path):
@@ -86,7 +88,7 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
                 else:
                     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
                     shutil.copy2(src_path, dest_path)
-        print(f"Exercice prêt dans {user_dir}")
+        print(f"Exercice prêt dans {target_dir}")
 
     # Nettoyage du dossier temporaire
     shutil.rmtree(tmp_dir)
