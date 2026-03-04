@@ -24,6 +24,9 @@ parser_exec = subparsers.add_parser('exec', help="Open a temporary exec shell fo
 parser_exec.add_argument("--base-dir", default="~/.local/share/base", help="Base directory for exercises")
 parser_exec.add_argument('exs', help="exercise alias (ex: min_1, sum_2)")
 
+parser_check = subparsers.add_parser('check', help="Validate solution in current or provided directory")
+parser_check.add_argument("--user-dir", default=None, help="Directory containing the exercise to validate")
+
 if __name__ == '__main__':
     args = argParser.parse_args()
     print(args)

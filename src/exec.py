@@ -25,27 +25,27 @@ def ExecRun(args):
     # dossier de travail temporaire
     work_dir = tempfile.mkdtemp(prefix="trainer_work_")
 
-    # installation dedans (ton installExercice ne change pas)
-    ok = installExercice(args.exs, base_dir=args.base_dir, user_dir=work_dir)
-    if not ok:
-        shutil.rmtree(work_dir, ignore_errors=True)
-        return False
+    try:
+        # installation dedans
+        ok = installExercice(args.exs, base_dir=args.base_dir, user_dir=work_dir)
+        if not ok:
+            return False
 
-    # timer
-    start = int(time.time())
-    with open(os.path.join(work_dir, ".timer_start"), "w", encoding="utf-8") as f:
-        f.write(str(start))
+        # timer
+        start = int(time.time())
+        with open(os.path.join(work_dir, ".timer_start"), "w", encoding="utf-8") as f:
+            f.write(str(start))
 
-    timeout = _timeout_seconds(work_dir)  # None si pas défini
+        timeout = _timeout_seconds(work_dir)  # None si pas défini
 
-    # rcfile bash
-    rc = os.path.join(work_dir, ".trainer_rc")
-    with open(rc, "w", encoding="utf-8") as f:
-        f.write(f'export TRAINER_START={start}\n')
-        f.write(f'export TRAINER_TIMEOUT={timeout if timeout is not None else ""}\n')
-        f.write(f'export TRAINER_ALIAS="{args.exs}"\n')
-        f.write(f'export TRAINER_WORKDIR="{work_dir}"\n')
-        f.write(r'''
+        # rcfile bash
+        rc = os.path.join(work_dir, ".trainer_rc")
+        with open(rc, "w", encoding="utf-8") as f:
+            f.write(f'export TRAINER_START={start}\n')
+            f.write(f'export TRAINER_TIMEOUT={timeout if timeout is not None else ""}\n')
+            f.write(f'export TRAINER_ALIAS="{args.exs}"\n')
+            f.write(f'export TRAINER_WORKDIR="{work_dir}"\n')
+            f.write(r'''
 trainer_prompt() {
   if [ -n "$TRAINER_TIMEOUT" ]; then
     now=$(date +%s)
@@ -65,7 +65,7 @@ trainer_prompt() {
 PROMPT_COMMAND=trainer_prompt
 trainer_prompt
 
-# message quand le temps est fini (sans quitter)
+# message quand le temps est fini
 if [ -n "$TRAINER_TIMEOUT" ]; then
   now=$(date +%s)
   rem=$((TRAINER_TIMEOUT-(now-TRAINER_START)))
@@ -79,9 +79,11 @@ fi
 cd "$TRAINER_WORKDIR"
 ''')
 
-    # ouvrir un shell dans le dossier de travail
-    subprocess.run(["bash", "--noprofile", "--rcfile", rc, "-i"], cwd=work_dir)
+        # ouvrir un shell dans le dossier de travail
+        subprocess.run(["bash", "--noprofile", "--rcfile", rc, "-i"], cwd=work_dir)
 
-    # cleanup après exit
-    shutil.rmtree(work_dir, ignore_errors=True)
-    return True
+        return True
+
+    finally:
+        # cleanup après exit
+        shutil.rmtree(work_dir, ignore_errors=True)
