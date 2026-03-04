@@ -20,6 +20,10 @@ parser_ls.add_argument("--base-dir", default="~/.local/share/base", help="Base d
 parser_ls.add_argument("--tag", default="", help="Filter exercises by tag substring")
 
 
+parser_exec = subparsers.add_parser('exec', help="Open a temporary exec shell for an exercise")
+parser_exec.add_argument("--base-dir", default="~/.local/share/base", help="Base directory for exercises")
+parser_exec.add_argument('exs', help="exercise alias (ex: min_1, sum_2)")
+
 if __name__ == '__main__':
     args = argParser.parse_args()
     print(args)

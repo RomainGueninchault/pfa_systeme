@@ -1,4 +1,4 @@
-
+from exec import ExecRun
 from arg import argParser
 from importBase import importRun
 from ls import lsRun
@@ -22,11 +22,13 @@ def main():
         lsRun(args)
     elif args.cmd == "install":
         result_install = installExercice(args.exs, base_dir=args.base_dir, user_dir=args.user_dir)
-        if result_install:
-            start_timer(user_dir=args.user_dir)
+        # if result_install:
+        #     start_timer(user_dir=args.user_dir)
     elif args.cmd == "check":
         result=validateExercice(user_dir=args.user_dir)
         check_timer_and_report(user_dir=args.user_dir, validation_result=result)
+    elif args.cmd == "exec":
+        ExecRun(args)
     elif args.cmd == "time":
         check_timer_and_report(user_dir=os.getcwd(), validation_result=None)
     else:
