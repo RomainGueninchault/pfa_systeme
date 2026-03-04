@@ -3,6 +3,8 @@ import yaml
 import tempfile
 import shutil
 
+BD = ".trainer_index.yml"
+
 def installExercice(exercice_name, base_dir=None, user_dir=None):
     # Vérification que le dossier utilisateur (ou courant) est vide
     target_dir = user_dir if user_dir else os.getcwd()
@@ -14,34 +16,44 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
     """
     import subprocess
     # Détermination du répertoire de base
-    home = os.path.expanduser(base_dir or "~/.base")
+    home = os.path.expanduser(base_dir or "~/.local/share/base")
     if not os.path.isdir(home):
-        raise RuntimeError(f"Le répertoire de base {home} n'existe pas.")
+        raise RuntimeError(f"No DB, you must at least execute trainer import <url> once.")
 
-    # Recherche de l'exercice
-    exo_path = None
-    common_path = None
-    config = None
-    for repo in os.listdir(home):
-        repo_path = os.path.join(home, repo)
-        if not os.path.isdir(repo_path):
-            continue
-        for root, dirs, files in os.walk(repo_path):
-            if 'config.yml' in files:
-                with open(os.path.join(root, 'config.yml')) as f:
-                    config = yaml.safe_load(f)
-                if config.get('name') == exercice_name:
-                    exo_path = root
-                    # Cherche le dossier commun à la racine du dépôt
-                    common_candidate = os.path.join(repo_path, 'common')
-                    if os.path.isdir(common_candidate):
-                        common_path = common_candidate
-                    break
-        if exo_path:
-            break
-    if not exo_path:
-        print(f"Exercice '{exercice_name}' non trouvé dans {home}.")
+    # Recherche de l'exercice (via index YAML)
+    index_path = os.path.join(home, BD)
+    if not os.path.isfile(index_path):
+        print(f"DB index erreur, please run trainer update to solve it")
         return False
+
+    with open(index_path, "r", encoding="utf-8") as f:
+        idx = yaml.safe_load(f) or {}
+
+    exercises = idx.get("exercises", {})
+    exo_path = exercises.get(exercice_name)
+    if not exo_path:
+        print(f"unfound exercice '{exercice_name}'")
+        return False
+
+    # trouver le repo racine pour common/
+    rel = os.path.relpath(exo_path, home)
+    repo = rel.split(os.sep, 1)[0]
+    repo_path = os.path.join(home, repo)
+
+    # common section
+    common_path = None
+    common_candidate = os.path.join(repo_path, "common")
+    if os.path.isdir(common_candidate):
+        common_path = common_candidate
+
+    # lire config.yml de l'exercice (toujours)
+    config_path = os.path.join(exo_path, "config.yml")
+    if not os.path.isfile(config_path):
+        print(f"No config in the exercice: {exercice_name}, please contact the owner")
+        return False
+
+    with open(config_path, "r", encoding="utf-8") as f:
+        config = yaml.safe_load(f) or {}
 
     # Création du dossier temporaire
     tmp_dir = tempfile.mkdtemp(prefix='trainer_')
@@ -60,7 +72,7 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
         try:
             subprocess.run(prepare_cmd, shell=True, check=True, cwd=exo_tmp)
         except subprocess.CalledProcessError:
-            print(f"La commande de préparation a échoué : {prepare_cmd}")
+            print(f"command {prepare_cmd} failed")
             shutil.rmtree(tmp_dir)
             return False
 
@@ -88,7 +100,7 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
                 else:
                     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
                     shutil.copy2(src_path, dest_path)
-        print(f"Exercice prêt dans {target_dir}")
+        print(f"Exercice is ready on {target_dir}")
 
     # Nettoyage du dossier temporaire
     shutil.rmtree(tmp_dir)
