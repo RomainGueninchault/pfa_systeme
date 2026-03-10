@@ -1,6 +1,7 @@
 import os
 import yaml
 import subprocess
+from history import record_done, record_failed
 
 def validateExercice(user_dir=None):
     """
@@ -16,6 +17,10 @@ def validateExercice(user_dir=None):
     with open(config_path) as f:
         config = yaml.safe_load(f)
 
+    # Récupérer le chemin de l'exercice depuis le config.yml
+    # Si 'path' existe dans config, l'utiliser, sinon utiliser le chemin absolu du user_dir
+    exo_path = config.get("path") if config and "path" in config else user_dir
+
     validate_cmd = None
     if config and 'commands' in config and 'validate' in config['commands']:
         validate_cmd = config['commands']['validate']
@@ -27,7 +32,9 @@ def validateExercice(user_dir=None):
     try:
         subprocess.run(validate_cmd, shell=True, check=True, cwd=user_dir)
         print("Validation réussie.")
+        record_done(exo_path, user_dir)
         return True
     except subprocess.CalledProcessError:
         print(f"La commande de validation a échoué : {validate_cmd}")
+        record_failed(exo_path, user_dir)
         return False
