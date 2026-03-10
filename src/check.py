@@ -32,9 +32,9 @@ def validateExercice(user_dir=None):
     try:
         subprocess.run(validate_cmd, shell=True, check=True, cwd=user_dir)
         print("Validation réussie.")
-        record_done(exo_path, user_dir)
+        record_done(exo_path)
         return True
     except subprocess.CalledProcessError:
         print(f"La commande de validation a échoué : {validate_cmd}")
-        record_failed(exo_path, user_dir)
+        record_failed(exo_path)
         return False
