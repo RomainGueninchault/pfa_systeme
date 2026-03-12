@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "trainer"
 version = "0.0.1"
 description = "Systeme d'entrainement"
-dependencies = []
+dependencies = ["PyYAML"]
 
 [project.scripts]
 trainer = "trainer:main"
