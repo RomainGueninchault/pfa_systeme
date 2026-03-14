@@ -1,0 +1,8 @@
+.venv
+.vscode
+*.log
+*.out
+*.toc
+*.aux
+*.pdf
+__pycache__

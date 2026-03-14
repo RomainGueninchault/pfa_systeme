@@ -4,6 +4,14 @@ import yaml
 CFG = ("config.yml", "config.yaml")
 INDEX = ".trainer_index.yml"
 
+RESET   = "\033[0m"
+RED     = "\033[31m"
+GREEN   = "\033[32m"
+YELLOW  = "\033[33m"
+BLUE    = "\033[34m"
+MAGENTA = "\033[35m"
+CYAN    = "\033[36m"
+
 def yml(pathFile):
     try:
         with open(pathFile, "r", encoding="utf-8") as f:
@@ -103,10 +111,12 @@ def lsRun(args):
     exercises = (idx.get("exercises") if isinstance(idx, dict) else {}) or {}
 
     if not exercises:
-        print("Index absent/vidé. Lance d'abord: trainer import <url> (qui rebuild l'index).")
+        print(RED + "Index absent/vidé. Lance d'abord: trainer import <url> (qui rebuild l'index)." + RESET)
         return
 
     tf = (args.tag or "").strip().lower()
+
+    rows = []
 
     for alias in sorted(exercises):
         ex_dir = exercises[alias]
@@ -120,11 +130,34 @@ def lsRun(args):
 
         c = yml(cfg)
         tags = tags_norm(c.get("tags"))
+        tags_str = " ".join(tags)
 
-        if tf and tf not in " ".join(t.lower() for t in tags):
+        if tf and tf not in tags_str.lower():
             continue
 
-        print("-" * 30)
-        nonempty("Exercise", alias)
-        nonempty("Tags", tags)
-        nonempty("Description", c.get("description"))
+        desc = c.get("description") or ""
+
+        rows.append((alias, tags_str, desc))
+
+        # print(RED + "-" * 30 + RESET)
+        # nonempty(GREEN + "Exercise" + RESET, alias)
+        # nonempty(GREEN + "Tags" + RESET, tags)
+        # nonempty(GREEN + "Description"+ RESET, c.get("description"))
+
+    if not rows:
+        print(RED + "No exercises found." + RESET)
+        return
+    
+    name_w = max(len(r[0]) for r in rows)
+    tags_w = max(len(r[1]) for r in rows)
+
+    name_w = max(name_w, len("NAME"))
+    tags_w = max(tags_w, len("TAGS"))
+
+    header = (GREEN + "NAME".ljust(name_w) + RESET + "   " + CYAN + "TAGS".ljust(tags_w) + RESET + "   " + MAGENTA + "DESCRIPTION" + RESET)
+
+    print(header)
+    print("-" * (name_w + tags_w + 65))
+
+    for name, tags, desc in rows:
+        print(BLUE + name.ljust(name_w) + RESET + "   " + tags.ljust(tags_w) + "   " + desc)
