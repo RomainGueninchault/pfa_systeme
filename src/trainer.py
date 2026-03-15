@@ -1,6 +1,6 @@
 from exec import ExecRun
 from arg import argParser
-from importBase import importRun
+from importBase import importRun, pullRun
 from ls import lsRun
 from install import installExercice
 from check import validateExercice
@@ -31,6 +31,8 @@ def main():
         ExecRun(args)
     elif args.cmd == "time":
         check_timer_and_report(user_dir=os.getcwd(), validation_result=None)
+    elif args.cmd == "update":
+        pullRun(args)
     else:
         argParser.print_help()
 
