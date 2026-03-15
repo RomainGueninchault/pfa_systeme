@@ -1,0 +1,45 @@
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installer les outils de build
+        run: pip install build
+
+      - name: Builder le package
+        run: python -m build
+
+      - name: Sauvegarder les artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write 
+
+    steps:
+      - name: Récupérer les artefacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publier sur PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
