@@ -10,7 +10,7 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
     target_dir = user_dir if user_dir else os.getcwd()
     if os.path.exists(target_dir) and os.listdir(target_dir):
         print(f"Le dossier cible '{target_dir}' n'est pas vide. Installation annulée.")
-        return
+        return False
     """
     Copie un exercice et le dossier commun dans un dossier temporaire, compile, nettoie et copie les fichiers finaux vers le dossier utilisateur.
     """

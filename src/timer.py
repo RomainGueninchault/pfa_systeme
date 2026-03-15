@@ -49,3 +49,4 @@ def check_timer_and_report(user_dir=None, validation_result=None):
     elif not start_time:
         print("Aucun timer trouvé.")
 
+

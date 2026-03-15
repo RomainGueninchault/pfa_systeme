@@ -3,12 +3,30 @@ import yaml
 import subprocess
 from history import record_done, record_failed
 
-def validateExercice(user_dir=None):
+INDEX = ".trainer_index.yml"
+
+def read_index(base_dir):
+    """Lit l'index YAML depuis la base (comme dans ls.py)"""
+    root = os.path.expanduser(base_dir)
+    p = os.path.join(root, INDEX)
+    if not os.path.isfile(p):
+        return {}
+    try:
+        with open(p, "r", encoding="utf-8") as f:
+            d = yaml.safe_load(f)
+        return d if isinstance(d, dict) else {}
+    except Exception:
+        return {}
+
+def validateExercice(user_dir=None, base_dir=None):
     """
     Exécute la commande 'validate' définie dans le config.yml de l'exercice situé dans user_dir.
     """
     if not user_dir:
         user_dir = os.getcwd()
+    if not base_dir:
+        base_dir = "~/.local/share/base"
+
     config_path = os.path.join(user_dir, 'config.yml')
     if not os.path.isfile(config_path):
         print(f"config.yml introuvable dans {user_dir}.")
@@ -17,9 +35,19 @@ def validateExercice(user_dir=None):
     with open(config_path) as f:
         config = yaml.safe_load(f)
 
-    # Récupérer le chemin de l'exercice depuis le config.yml
-    # Si 'path' existe dans config, l'utiliser, sinon utiliser le chemin absolu du user_dir
-    exo_path = config.get("path") if config and "path" in config else user_dir
+    # Récupérer l'alias depuis la variable d'env (définie lors de exec)
+    exo_alias = os.environ.get("TRAINER_ALIAS")
+    exo_path = None
+
+    if exo_alias:
+        # Relire l'index pour récupérer le chemin SOURCE depuis l'alias (comme ls.py)
+        idx = read_index(base_dir)
+        exercises = (idx.get("exercises") if isinstance(idx, dict) else {}) or {}
+        exo_path = exercises.get(exo_alias)
+
+    if not exo_path:
+        print("Erreur : impossible de déterminer le chemin source de l'exercice.")
+        return False
 
     validate_cmd = None
     if config and 'commands' in config and 'validate' in config['commands']:
