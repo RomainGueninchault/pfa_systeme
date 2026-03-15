@@ -2,6 +2,8 @@ import os
 import yaml
 import subprocess
 from history import record_done, record_failed
+from timer import get_elapsed_time, format_duration
+from exec import _timeout_seconds
 
 INDEX = ".trainer_index.yml"
 
@@ -60,7 +62,18 @@ def validateExercice(user_dir=None, base_dir=None):
     try:
         subprocess.run(validate_cmd, shell=True, check=True, cwd=user_dir)
         print("Validation réussie.")
-        record_done(exo_path)
+
+        # Calculer le temps écoulé et l'enregistrer
+        elapsed = get_elapsed_time(user_dir)
+        time_str = None
+        if elapsed is not None:
+            timeout_seconds = _timeout_seconds(user_dir)
+            if timeout_seconds is not None and elapsed > timeout_seconds:
+                time_str = "overtime"
+            else:
+                time_str = format_duration(elapsed)
+
+        record_done(exo_path, time_str=time_str)
         return True
     except subprocess.CalledProcessError:
         print(f"La commande de validation a échoué : {validate_cmd}")

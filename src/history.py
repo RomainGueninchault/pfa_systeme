@@ -37,11 +37,14 @@ def record_started(exo_path: str):
     data[h_exo] = {"status": "started"}
     _save(data)
 
-def record_done(exo_path: str):
+def record_done(exo_path: str, time_str: str | None = None):
     """Enregistre qu'un exercice a été réussi."""
     data = _load()
     h_exo = exo_hash(exo_path)
-    data[h_exo] = {"status": "done"}
+    entry = {"status": "done"}
+    if time_str is not None:
+        entry["time"] = time_str
+    data[h_exo] = entry
     _save(data)
 
 def record_failed(exo_path: str):
