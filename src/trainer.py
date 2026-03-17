@@ -5,6 +5,7 @@ from ls import lsRun
 from install import installExercice
 from check import validateExercice
 from timer import start_timer, check_timer_and_report
+from stats import show_stats
 
 import os
 import yaml
@@ -33,6 +34,8 @@ def main():
         check_timer_and_report(user_dir=os.getcwd(), validation_result=None)
     elif args.cmd == "update":
         pullRun(args)
+    elif args.cmd == "stats":
+        show_stats(args)
     else:
         argParser.print_help()
 

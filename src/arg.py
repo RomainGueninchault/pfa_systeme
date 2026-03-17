@@ -32,6 +32,8 @@ parser_check.add_argument("--user-dir", default=None, help="Directory containing
 parser_update = subparsers.add_parser('update', help="Update an existing exercise")
 parser_update.add_argument("--base-dir", default="~/.local/share/base", help="Directory containing the exercise to update")
 
+parser_stats = subparsers.add_parser('stats', help="List the exercises that have been done and failed")
+parser_stats.add_argument("--filter", default="", help="Filter the stats by status")
 
 if __name__ == '__main__':
     args = argParser.parse_args()
