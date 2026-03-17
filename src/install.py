@@ -5,6 +5,14 @@ import shutil
 
 BD = ".trainer_index.yml"
 
+RESET   = "\033[0m"
+RED     = "\033[31m"
+GREEN   = "\033[32m"
+YELLOW  = "\033[33m"
+BLUE    = "\033[34m"
+MAGENTA = "\033[35m"
+CYAN    = "\033[36m"
+
 def installExercice(exercice_name, base_dir=None, user_dir=None):
     # Vérification que le dossier utilisateur (ou courant) est vide
     target_dir = user_dir if user_dir else os.getcwd()
@@ -18,12 +26,12 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
     # Détermination du répertoire de base
     home = os.path.expanduser(base_dir or "~/.local/share/base")
     if not os.path.isdir(home):
-        raise RuntimeError(f"No DB, you must at least execute trainer import <url> once.")
+        raise RuntimeError(f"{RED}No DB, you must at least execute trainer import <url> once.{RESET}")
 
     # Recherche de l'exercice (via index YAML)
     index_path = os.path.join(home, BD)
     if not os.path.isfile(index_path):
-        print(f"DB index erreur, please run trainer update to solve it")
+        print(f"{RED}DB index erreur, please run trainer update to solve it.{RESET}")
         return False
 
     with open(index_path, "r", encoding="utf-8") as f:
@@ -32,7 +40,7 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
     exercises = idx.get("exercises", {})
     exo_path = exercises.get(exercice_name)
     if not exo_path:
-        print(f"unfound exercice '{exercice_name}'")
+        print(f"{RED}unfound exercice '{exercice_name}'{RESET}")
         return False
 
     # trouver le repo racine pour common/
@@ -61,18 +69,18 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
     shutil.copytree(exo_path, exo_tmp)
     if common_path:
         shutil.copytree(common_path, exo_tmp, dirs_exist_ok=True)
-    print(f"Exercice et commun copiés dans {exo_tmp}")
+    # print(f"Exercice et commun copiés dans {exo_tmp}")
 
     # Compilation/Préparation (commande 'prepare' dans config.yml)
     prepare_cmd = None
     if config and 'commands' in config and 'prepare' in config['commands']:
         prepare_cmd = config['commands']['prepare']
     if prepare_cmd:
-        print(f"Préparation/Compilation avec : {prepare_cmd}")
+        # print(f"Préparation/Compilation avec : {prepare_cmd}")
         try:
             subprocess.run(prepare_cmd, shell=True, check=True, cwd=exo_tmp)
         except subprocess.CalledProcessError:
-            print(f"command {prepare_cmd} failed")
+            print(f"{RED}command {prepare_cmd} failed{RESET}")
             shutil.rmtree(tmp_dir)
             return False
 
@@ -100,9 +108,9 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
                 else:
                     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
                     shutil.copy2(src_path, dest_path)
-        print(f"Exercice is ready on {target_dir}")
+        print(f"{BLUE}Exercice is ready on {RESET}{target_dir}")
 
     # Nettoyage du dossier temporaire
     shutil.rmtree(tmp_dir)
-    print("Dossier temporaire supprimé.")
+    # print("Dossier temporaire supprimé.")
     return True

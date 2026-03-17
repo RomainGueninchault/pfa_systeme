@@ -7,6 +7,13 @@ import subprocess
 
 from install import installExercice
 
+RESET   = "\033[0m"
+RED     = "\033[31m"
+GREEN   = "\033[32m"
+YELLOW  = "\033[33m"
+BLUE    = "\033[34m"
+
+
 def _timeout_seconds(work_dir):
     pathYml = os.path.join(work_dir, "config.yml")
     if not os.path.isfile(pathYml):
@@ -17,28 +24,34 @@ def _timeout_seconds(work_dir):
         t = c.get("timeout")
         if t is None:
             return None
-        return int(float(t) * 60)  # timeout en minutes -> secondes
+        return int(float(t) * 60)
     except Exception:
         return None
 
+
 def ExecRun(args):
-    # dossier de travail temporaire
     work_dir = tempfile.mkdtemp(prefix="trainer_work_")
 
     try:
-        # installation dedans
+        print(f"{BLUE}Installing exercise...{RESET}")
         ok = installExercice(args.exs, base_dir=args.base_dir, user_dir=work_dir)
         if not ok:
+            print(f"{RED}Installation failed{RESET}")
             return False
 
-        # timer
+        print(f"{BLUE}Installation successful{RESET}")
+
         start = int(time.time())
         with open(os.path.join(work_dir, ".timer_start"), "w", encoding="utf-8") as f:
             f.write(str(start))
 
-        timeout = _timeout_seconds(work_dir)  # None si pas défini
+        timeout = _timeout_seconds(work_dir)
 
-        # rcfile bash
+        if timeout is not None:
+            print(f"{BLUE}Timeout detected: {timeout}s{RESET}")
+        else:
+            print(f"{BLUE}No timeout defined{RESET}")
+
         rc = os.path.join(work_dir, ".trainer_rc")
         with open(rc, "w", encoding="utf-8") as f:
             f.write(f'export TRAINER_START={start}\n')
@@ -65,7 +78,6 @@ trainer_prompt() {
 PROMPT_COMMAND=trainer_prompt
 trainer_prompt
 
-# message quand le temps est fini
 if [ -n "$TRAINER_TIMEOUT" ]; then
   now=$(date +%s)
   rem=$((TRAINER_TIMEOUT-(now-TRAINER_START)))
@@ -79,11 +91,16 @@ fi
 cd "$TRAINER_WORKDIR"
 ''')
 
-        # ouvrir un shell dans le dossier de travail
+        print(f"{BLUE}Launching sandbox shell{RESET}")
         subprocess.run(["bash", "--noprofile", "--rcfile", rc, "-i"], cwd=work_dir)
 
+        print(f"{BLUE}Session ended{RESET}")
         return True
 
+    except Exception as e:
+        print(f"{RED}Execution error: {e}{RESET}")
+        return False
+
     finally:
-        # cleanup après exit
+        print(f"{BLUE}Cleaning up...{RESET}")
         shutil.rmtree(work_dir, ignore_errors=True)
