@@ -8,6 +8,22 @@ def format_duration(seconds):
     minutes, secs = divmod(total_seconds, 60)
     return f"{minutes} min {secs} sec"
 
+def get_elapsed_time(user_dir=None):
+    """
+    Retourne le temps écoulé en secondes depuis le démarrage du timer.
+    Retourne None si le timer n'existe pas ou ne peut pas être lu.
+    """
+    timer_file = os.path.join(user_dir if user_dir else os.getcwd(), ".timer_start")
+    if not os.path.exists(timer_file):
+        return None
+    try:
+        with open(timer_file, "r") as f:
+            start_time = float(f.read().strip())
+        elapsed = time.time() - start_time
+        return elapsed
+    except Exception:
+        return None
+
 def start_timer(user_dir=None):
     timer_file = os.path.join(user_dir if user_dir else os.getcwd(), ".timer_start")
     with open(timer_file, "w") as f:
@@ -15,17 +31,10 @@ def start_timer(user_dir=None):
     print("Timer démarré. Lancez 'check' avec une validation réussie pour arrêter le timer.")
 
 def check_timer_and_report(user_dir=None, validation_result=None):
-    timer_file = os.path.join(user_dir if user_dir else os.getcwd(), ".timer_start")
-    start_time = None
-    if os.path.exists(timer_file):
-        with open(timer_file, "r") as f:
-            try:
-                start_time = float(f.read().strip())
-            except Exception:
-                start_time = None
-    if validation_result and start_time:
-        elapsed = time.time() - start_time
+    elapsed = get_elapsed_time(user_dir)
+    if validation_result and elapsed is not None:
         print(f"Temps écoulé pour compléter l'exercice : {format_duration(elapsed)}.")
+        timer_file = os.path.join(user_dir if user_dir else os.getcwd(), ".timer_start")
         os.remove(timer_file)
     elif not validation_result:
         # Affiche le temps restant avant le timeout si défini
@@ -38,14 +47,16 @@ def check_timer_and_report(user_dir=None, validation_result=None):
                     timeout_min = config.get('timeout')
                 except Exception:
                     timeout_min = None
-        if start_time and timeout_min:
-            elapsed_seconds = time.time() - start_time
-            print(f"Temps écoulé depuis le début de l'exercice : {format_duration(elapsed_seconds)}.")
-            remaining_seconds = float(timeout_min) * 60.0 - elapsed_seconds
+        if elapsed is not None and timeout_min:
+            print(f"Temps écoulé depuis le début de l'exercice : {format_duration(elapsed)}.")
+            remaining_seconds = float(timeout_min) * 60.0 - elapsed
             if remaining_seconds > 0:
                 print(f"Temps restant avant timeout : {format_duration(remaining_seconds)}.")
             else:
                 print(f"Temps imparti dépassé de {format_duration(abs(remaining_seconds))} !")
-    elif not start_time:
+    elif elapsed is None:
         print("Aucun timer trouvé.")
+
+
+
 

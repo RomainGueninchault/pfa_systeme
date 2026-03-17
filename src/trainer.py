@@ -25,7 +25,7 @@ def main():
         # if result_install:
         #     start_timer(user_dir=args.user_dir)
     elif args.cmd == "check":
-        result=validateExercice(user_dir=args.user_dir)
+        result=validateExercice(user_dir=args.user_dir, base_dir=args.base_dir)
         check_timer_and_report(user_dir=args.user_dir, validation_result=result)
     elif args.cmd == "exec":
         ExecRun(args)

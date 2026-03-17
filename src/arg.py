@@ -25,6 +25,7 @@ parser_exec.add_argument("--base-dir", default="~/.local/share/base", help="Base
 parser_exec.add_argument('exs', help="exercise alias (ex: min_1, sum_2)")
 
 parser_check = subparsers.add_parser('check', help="Validate solution in current or provided directory")
+parser_check.add_argument("--base-dir", default="~/.local/share/base", help="Base directory for exercises")
 parser_check.add_argument("--user-dir", default=None, help="Directory containing the exercise to validate")
 
 
