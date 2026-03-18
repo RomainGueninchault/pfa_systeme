@@ -6,6 +6,7 @@ from install import installExercice
 from check import validateExercice
 from timer import start_timer, check_timer_and_report
 from stats import show_stats
+from recommend import recommendRun
 
 import os
 import yaml
@@ -36,6 +37,8 @@ def main():
         pullRun(args)
     elif args.cmd == "stats":
         show_stats(args)
+    elif args.cmd == "recommend":
+        recommendRun(args)
     else:
         argParser.print_help()
 

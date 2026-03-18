@@ -35,6 +35,14 @@ parser_update.add_argument("--base-dir", default="~/.trainer", help="Directory c
 parser_stats = subparsers.add_parser('stats', help="List the exercises that have been done and failed")
 parser_stats.add_argument("--filter", default="", help="Filter the stats by status")
 
+parser_recommend = subparsers.add_parser('recommend', help="Recommend exercises from a reference exercise")
+parser_recommend.add_argument('reference_alias',help="Alias de l'exercice de référence")
+parser_recommend.add_argument("--base-dir",default="~/.trainer",help="Base directory for exercises")
+parser_recommend.add_argument("--top-k",type=int,default=5,help="Nombre de recommandations")
+parser_recommend.add_argument("--include-done",action="store_true",help="Inclure aussi les exercices déjà faits")
+parser_recommend.add_argument("--allow-lower-difficulty",action="store_true",help="Ne pas filtrer les difficultés inférieures")
+parser_recommend.add_argument("--min-common-tags",type=int,default=1,help="Nombre minimum de tags en commun")
+
 if __name__ == '__main__':
     args = argParser.parse_args()
     print(args)
