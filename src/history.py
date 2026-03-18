@@ -56,12 +56,19 @@ def record_failed(exo_path: str):
         data[h_exo] = {"status": "failed"}
     _save(data)
 
-def get_status(exo_path: str) -> str | None:
-    """Retourne le statut d'un exercice : 'started', 'done', 'failed', ou None."""
+def get_status(exo_path: str) -> dict | None:
+    """Retourne un dict avec le statut et les infos d'un exercice.
+    
+    Retour:
+    - None si pas d'historique
+    - {"status": "started"} si commencé
+    - {"status": "failed"} si tenté mais raté
+    - {"status": "done", "time": "time_str"} si réussi (time peut être None)
+    """
     data = _load()
     h_exo = exo_hash(exo_path)
     entry = data.get(h_exo)
     if entry is None:
         return None
-    return entry.get("status")
+    return entry
 

@@ -1,5 +1,6 @@
 import os
 import yaml
+from history import get_status
 
 CFG = ("config.yml", "config.yaml")
 INDEX = ".trainer_index.yml"
@@ -11,6 +12,47 @@ YELLOW  = "\033[33m"
 BLUE    = "\033[34m"
 MAGENTA = "\033[35m"
 CYAN    = "\033[36m"
+ORANGE  = "\033[38;5;208m"
+
+def get_exercise_status(ex_dir):
+    """Retourne le statut de l'exercice : (status, time).
+    
+    Status peut être:
+    - 'not_started' : pas d'historique
+    - 'started' : commencé mais pas réussi/échoué
+    - 'failed' : tenté mais échoué
+    - 'done_in_time' : réussi dans le temps imparti
+    - 'done_overtime' : réussi mais dépassement du temps
+    """
+    entry = get_status(ex_dir)
+    
+    if entry is None:
+        return ('not_started', None)
+    
+    status = entry.get('status')
+    time_str = entry.get('time')
+    
+    if status == 'done':
+        if time_str is None:
+            return ('done_overtime', time_str)
+        return ('done_in_time', time_str)
+    elif status == 'failed':
+        return ('failed', None)
+    elif status == 'started':
+        return ('started', None)
+    
+    return ('not_started', None)
+
+def get_status_color(status):
+    """Retourne la couleur ANSI pour un statut donné."""
+    color_map = {
+        'not_started': BLUE,
+        'started': YELLOW,
+        'failed': RED,
+        'done_in_time': GREEN,
+        'done_overtime': ORANGE,
+    }
+    return color_map.get(status, BLUE)
 
 def yml(pathFile):
     try:
@@ -115,6 +157,8 @@ def lsRun(args):
         return
 
     tf = (args.tag or "").strip().lower()
+    use_color = getattr(args, 'color', False)
+    hide_done = getattr(args, 'done', False)
 
     rows = []
 
@@ -122,7 +166,6 @@ def lsRun(args):
         ex_dir = exercises[alias]
         cfg = os.path.join(ex_dir, "config.yml")
         if not os.path.isfile(cfg):
-            # si l'exercice utilise config.yaml, tu peux aussi tester ça:
             cfg2 = os.path.join(ex_dir, "config.yaml")
             if not os.path.isfile(cfg2):
                 continue
@@ -135,14 +178,16 @@ def lsRun(args):
         if tf and tf not in tags_str.lower():
             continue
 
+        # Récupérer le statut de l'exercice
+        ex_status, ex_time = get_exercise_status(ex_dir)
+        
+        # Si -d activé, ignorer les exercices réussis
+        if hide_done and ex_status in ('done_in_time', 'done_overtime'):
+            continue
+
         desc = c.get("description") or ""
 
-        rows.append((alias, tags_str, desc))
-
-        # print(RED + "-" * 30 + RESET)
-        # nonempty(GREEN + "Exercise" + RESET, alias)
-        # nonempty(GREEN + "Tags" + RESET, tags)
-        # nonempty(GREEN + "Description"+ RESET, c.get("description"))
+        rows.append((alias, tags_str, desc, ex_status, ex_time))
 
     if not rows:
         print(RED + "No exercises found." + RESET)
@@ -159,5 +204,9 @@ def lsRun(args):
     print(header)
     print("-" * (name_w + tags_w + 65))
 
-    for name, tags, desc in rows:
-        print(BLUE + name.ljust(name_w) + RESET + "   " + tags.ljust(tags_w) + "   " + desc)
+    for name, tags, desc, status, time_info in rows:
+        if use_color:
+            color = get_status_color(status)
+            print(color + name.ljust(name_w) + RESET + "   " + tags.ljust(tags_w) + "   " + desc)
+        else:
+            print(BLUE + name.ljust(name_w) + RESET + "   " + tags.ljust(tags_w) + "   " + desc)
