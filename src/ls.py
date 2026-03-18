@@ -181,8 +181,8 @@ def lsRun(args):
         # Récupérer le statut de l'exercice
         ex_status, ex_time = get_exercise_status(ex_dir)
         
-        # Si -d activé, ignorer les exercices réussis
-        if hide_done and ex_status in ('done_in_time', 'done_overtime'):
+        # Par défaut, ignorer les exercices réussis (sauf si -d activé)
+        if not hide_done and ex_status in ('done_in_time', 'done_overtime'):
             continue
 
         desc = c.get("description") or ""
