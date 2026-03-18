@@ -21,7 +21,7 @@ def yml(pathFile):
 
 
 def show_stats(args):
-    base_dir = os.path.expanduser("~/.local/share/base/pfa_exercices")
+    base_dir = os.path.expanduser("~/.trainer/pfa_exercices")
     hist = yml(HISTORY_FILE)
 
     print(f"{BOLD}{CYAN}=== STATISTICS ==={RESET}\n")

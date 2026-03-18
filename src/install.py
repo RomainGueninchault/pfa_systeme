@@ -24,7 +24,7 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
     """
     import subprocess
     # Détermination du répertoire de base
-    home = os.path.expanduser(base_dir or "~/.local/share/base")
+    home = os.path.expanduser(base_dir or "~/.trainer")
     if not os.path.isdir(home):
         raise RuntimeError(f"{RED}No DB, you must at least execute trainer import <url> once.{RESET}")
 

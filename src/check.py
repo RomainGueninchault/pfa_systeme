@@ -31,7 +31,7 @@ def validateExercice(user_dir=None, base_dir=None):
     if not user_dir:
         user_dir = os.getcwd()
     if not base_dir:
-        base_dir = "~/.local/share/base"
+        base_dir = "~/.trainer"
 
     config_path = os.path.join(user_dir, 'config.yml')
     if not os.path.isfile(config_path):
