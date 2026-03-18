@@ -8,7 +8,7 @@ version = "0.0.1"
 requires-python = ">=3.9"
 readme = "README.md"
 description = "Systeme d'entrainement"
-dependencies = []
+dependencies = ["PyYAML"]
 
 [project.scripts]
 trainer = "trainer:main"
