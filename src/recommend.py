@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, Set
 import yaml
 
 from ls import read_index, tags_norm
-from history import HISTORY_FILE, exo_hash
+from history import HISTORY_FILE
 
 RESET   = "\033[0m"
 BOLD    = "\033[1m"
@@ -76,7 +76,7 @@ def get_exercise_catalog(base_dir: str) -> Dict[str, Dict[str, Any]]:
         tags = tags_norm(cfg.get("tags"))
         tags_set = {t.strip().lower() for t in tags if str(t).strip()}
 
-        history_entry = history.get(exo_hash(exo_dir), {})
+        history_entry = history.get(alias, {})
         status = history_entry.get("status")
 
         catalog[alias] = {

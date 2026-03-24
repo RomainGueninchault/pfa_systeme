@@ -1,6 +1,7 @@
 import os
 import yaml
-from history import exo_hash, HISTORY_FILE
+from history import HISTORY_FILE
+from ls import read_index
 
 RESET   = "\033[0m"
 RED     = "\033[31m"
@@ -21,19 +22,15 @@ def yml(pathFile):
 
 
 def show_stats(args):
-    base_dir = os.path.expanduser("~/.trainer/pfa_exercices")
+    base_dir = os.path.expanduser(args.base_dir if hasattr(args, 'base_dir') else "~/.trainer")
     hist = yml(HISTORY_FILE)
+    idx = read_index(base_dir)
+    exercises = (idx.get("exercises") if isinstance(idx, dict) else {}) or {}
 
     print(f"{BOLD}{CYAN}=== STATISTICS ==={RESET}\n")
 
-    for name in sorted(os.listdir(base_dir)):
-        path = os.path.join(base_dir, name)
-
-        if not os.path.isdir(path):
-            continue
-
-        h = exo_hash(path)
-        entry = hist.get(h)
+    for alias in sorted(exercises):
+        entry = hist.get(alias)
 
         if not entry:
             continue
@@ -52,7 +49,7 @@ def show_stats(args):
             status_str = f"{YELLOW}{status.upper()}{RESET}"
 
         # Affichage
-        line = f"{BOLD}{name:<25}{RESET} | {status_str}"
+        line = f"{BOLD}{alias:<25}{RESET} | {status_str}"
 
         if status == "done" and time:
             line += f" | {BLUE}time:{RESET} {time}"

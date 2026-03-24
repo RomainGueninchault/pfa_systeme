@@ -14,7 +14,7 @@ MAGENTA = "\033[35m"
 CYAN    = "\033[36m"
 ORANGE  = "\033[38;5;208m"
 
-def get_exercise_status(ex_dir):
+def get_exercise_status(alias):
     """Retourne le statut de l'exercice : (status, time).
     
     Status peut être:
@@ -24,8 +24,8 @@ def get_exercise_status(ex_dir):
     - 'done_in_time' : réussi dans le temps imparti
     - 'done_overtime' : réussi mais dépassement du temps
     """
-    entry = get_status(ex_dir)
-    
+    entry = get_status(alias)
+
     if entry is None:
         return ('not_started', None)
     
@@ -178,8 +178,8 @@ def lsRun(args):
         if tf and tf not in tags_str.lower():
             continue
 
-        # Récupérer le statut de l'exercice
-        ex_status, ex_time = get_exercise_status(ex_dir)
+        # Récupérer le statut de l'exercice en utilisant l'alias
+        ex_status, ex_time = get_exercise_status(alias)
         
         # Par défaut, ignorer les exercices réussis (sauf si -d activé)
         if not hide_done and ex_status in ('done_in_time', 'done_overtime'):

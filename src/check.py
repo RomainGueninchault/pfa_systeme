@@ -46,15 +46,9 @@ def validateExercice(user_dir=None, base_dir=None):
         return False
 
     exo_alias = os.environ.get("TRAINER_ALIAS")
-    exo_path = None
 
-    if exo_alias:
-        idx = read_index(base_dir)
-        exercises = (idx.get("exercises") if isinstance(idx, dict) else {}) or {}
-        exo_path = exercises.get(exo_alias)
-
-    if not exo_path:
-        print(f"{RED}Impossible de déterminer le chemin source{RESET}")
+    if not exo_alias:
+        print(f"{RED}Variable TRAINER_ALIAS non définie{RESET}")
         return False
 
     validate_cmd = None
@@ -80,10 +74,10 @@ def validateExercice(user_dir=None, base_dir=None):
             else:
                 time_str = format_duration(elapsed)
 
-        record_done(exo_path, time_str=time_str)
+        record_done(exo_alias, time_str=time_str)
         return True
 
     except subprocess.CalledProcessError:
         print(f"{RED}Validation échouée : {validate_cmd}{RESET}")
-        record_failed(exo_path)
+        record_failed(exo_alias)
         return False
