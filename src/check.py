@@ -3,7 +3,7 @@ import yaml
 import subprocess
 from history import record_done, record_failed
 from timer import get_elapsed_time, format_duration
-from exec import _timeout_seconds
+from execRun import _timeout_seconds
 
 RESET   = "\033[0m"
 RED     = "\033[31m"
