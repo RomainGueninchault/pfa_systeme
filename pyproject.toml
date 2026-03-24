@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "code-trainer"
-version = "0.0.1"
+version = "0.0.2"
 requires-python = ">=3.9"
 readme = "README.md"
 description = "Systeme d'entrainement"
@@ -14,7 +14,19 @@ dependencies = ["PyYAML"]
 trainer = "trainer:main"
 
 [tool.setuptools]
-py-modules = ["trainer", "arg", "importBase"]
+py-modules = [
+	"arg",
+	"check",
+	"exec",
+	"history",
+	"importBase",
+	"install",
+	"ls",
+	"recommend",
+	"stats",
+	"timer",
+	"trainer",
+]
 
 [tool.setuptools.package-dir]
 "" = "src"
