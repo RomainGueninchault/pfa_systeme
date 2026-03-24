@@ -17,7 +17,7 @@ trainer = "trainer:main"
 py-modules = [
 	"arg",
 	"check",
-	"exec",
+	"execRun",
 	"history",
 	"importBase",
 	"install",

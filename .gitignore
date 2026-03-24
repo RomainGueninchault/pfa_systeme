@@ -6,8 +6,8 @@
 *.aux
 *.pdf
 __pycache__
-src/trainer.egg-info
 src/dist
 build
 .idea/
 sandbox/
+*.egg-info
