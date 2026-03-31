@@ -46,13 +46,24 @@ def get_exercise_status(alias):
 def get_status_color(status):
     """Retourne la couleur ANSI pour un statut donné."""
     color_map = {
-        'not_started': BLUE,
+        'not_started': CYAN,
         'started': YELLOW,
         'failed': RED,
         'done_in_time': GREEN,
         'done_overtime': ORANGE,
     }
-    return color_map.get(status, BLUE)
+    return color_map.get(status, CYAN)
+
+def get_repo_name(ex_dir, base_dir):
+    """Extrait le nom du dépôt depuis le chemin de l'exercice.
+    
+    Retourne le nom du répertoire immédiatement après la base_dir.
+    Ex: ~/.trainer/mon_repo/exercise -> mon_repo
+    """
+    root = os.path.expanduser(base_dir)
+    rel_path = os.path.relpath(ex_dir, root)
+    parts = rel_path.split(os.sep)
+    return parts[0] if parts else ""
 
 def yml(pathFile):
     try:
@@ -185,8 +196,11 @@ def lsRun(args):
             continue
 
         desc = c.get("description") or ""
+        
+        # Récupérer le nom du dépôt
+        repo_name = get_repo_name(ex_dir, args.base_dir)
 
-        rows.append((alias, tags_str, desc, ex_status, ex_time))
+        rows.append((alias, tags_str, desc, ex_status, ex_time, repo_name))
 
     if not rows:
         print(RED + "No exercises found." + RESET)
@@ -194,15 +208,17 @@ def lsRun(args):
     
     name_w = max(len(r[0]) for r in rows)
     tags_w = max(len(r[1]) for r in rows)
+    repo_w = max(len(r[5]) for r in rows)
 
     name_w = max(name_w, len("NAME"))
     tags_w = max(tags_w, len("TAGS"))
+    repo_w = max(repo_w, len("REPO"))
 
-    header = (GREEN + "NAME".ljust(name_w) + RESET + "   " + CYAN + "TAGS".ljust(tags_w) + RESET + "   " + MAGENTA + "DESCRIPTION" + RESET)
+    header = (GREEN + "NAME".ljust(name_w) + RESET + "     " + BLUE + "TAGS".ljust(tags_w) + RESET + "     " + ORANGE + "REPO".ljust(repo_w) + RESET + "     " + MAGENTA + "DESCRIPTION" + RESET)
 
     print(header)
-    print("-" * (name_w + tags+_w + 65))
+    print("-" * (name_w + tags_w + repo_w + 95))
 
-    for name, tags, desc, status, time_info in rows:
+    for name, tags, desc, status, time_info, repo in rows:
         color = get_status_color(status)
-        print(color + name.ljust(name_w) + RESET + "   " + tags.ljust(tags_w) + "   " + desc)
+        print(color + name.ljust(name_w) + RESET + "     " + tags.ljust(tags_w) + "     " + repo.ljust(repo_w) + "     " + desc)
