@@ -75,22 +75,35 @@ trainer_prompt() {
     PS1="(trainer:$TRAINER_ALIAS) \u@\h:\w\$ "
   fi
 }
+
 PROMPT_COMMAND=trainer_prompt
 trainer_prompt
+
+TRAINER_TIMER_PID=""
 
 if [ -n "$TRAINER_TIMEOUT" ]; then
   now=$(date +%s)
   rem=$((TRAINER_TIMEOUT-(now-TRAINER_START)))
   if [ "$rem" -gt 0 ]; then
-    ( sleep "$rem"; echo; echo "[trainer] Time is up." ) &
+    (
+      sleep "$rem"
+      printf '\n[trainer] Time is up.\n'
+    ) &
+    TRAINER_TIMER_PID=$!
+    disown "$TRAINER_TIMER_PID" 2>/dev/null || disown %% 2>/dev/null || true
   else
     echo "[trainer] Time is up."
   fi
 fi
 
+trap '
+  if [ -n "${TRAINER_TIMER_PID:-}" ]; then
+    kill -- -"$TRAINER_TIMER_PID" 2>/dev/null || kill "$TRAINER_TIMER_PID" 2>/dev/null || true
+  fi
+' EXIT HUP INT TERM
+
 cd "$TRAINER_WORKDIR"
 ''')
-
         print(f"{BLUE}Launching sandbox shell{RESET}")
         subprocess.run(["bash", "--noprofile", "--rcfile", rc, "-i"], cwd=work_dir)
 
