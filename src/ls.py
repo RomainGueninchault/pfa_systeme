@@ -14,6 +14,93 @@ MAGENTA = "\033[35m"
 CYAN    = "\033[36m"
 ORANGE  = "\033[38;5;208m"
 
+# pour la recusivite
+def find_cfg_in_dir(dirpath):
+    for fn in CFG:
+        p = os.path.join(dirpath, fn)
+        if os.path.isfile(p):
+            return p
+    return None
+
+
+def merge_tags(parent_value, child_value):
+    merged = []
+    seen = set()
+
+    for tag in tags_norm(parent_value) + tags_norm(child_value):
+        key = tag.lower()
+        if key not in seen:
+            seen.add(key)
+            merged.append(tag)
+
+    return merged
+
+
+def deep_merge(parent, child):
+    """
+    Fusion parent -> enfant.
+    - dict + dict  => fusion récursive
+    - tags         => concat + déduplication
+    - sinon        => la valeur enfant écrase la valeur parent
+    """
+    if not isinstance(parent, dict):
+        parent = {}
+    if not isinstance(child, dict):
+        child = {}
+
+    result = dict(parent)
+
+    for key, child_value in child.items():
+        parent_value = result.get(key)
+
+        if key == "tags":
+            result[key] = merge_tags(parent_value, child_value)
+        elif isinstance(parent_value, dict) and isinstance(child_value, dict):
+            result[key] = deep_merge(parent_value, child_value)
+        else:
+            result[key] = child_value
+
+    return result
+
+
+def load_merged_config(ex_dir, base_dir):
+    """
+    Remonte depuis la feuille jusqu'à la racine du repo
+    et fusionne tous les YAML trouvés.
+    """
+    root = os.path.realpath(os.path.expanduser(base_dir))
+    ex_dir = os.path.realpath(ex_dir)
+
+    rel_path = os.path.relpath(ex_dir, root)
+    repo_name = rel_path.split(os.sep)[0]
+    repo_root = os.path.join(root, repo_name)
+
+    if not ex_dir.startswith(repo_root):
+        return {}
+
+    current = ex_dir
+    stack = []
+
+    while True:
+        cfg = find_cfg_in_dir(current)
+        if cfg:
+            stack.append(cfg)
+
+        if os.path.realpath(current) == os.path.realpath(repo_root):
+            break
+
+        parent = os.path.dirname(current)
+        if parent == current:
+            break
+        current = parent
+
+    merged = {}
+    for cfg_path in reversed(stack):   # racine -> feuille
+        merged = deep_merge(merged, yml(cfg_path))
+
+    return merged
+
+
 def get_exercise_status(alias):
     """Retourne le statut de l'exercice : (status, time).
     
@@ -83,8 +170,13 @@ def leaf(dirpath):
     except Exception:
         return False
 
-def exName(pathFile):
-    c = yml(pathFile)
+def exName(pathFile, base_dir=None):
+    if base_dir is not None:
+        ex_dir = os.path.dirname(pathFile)
+        c = load_merged_config(ex_dir, base_dir)
+    else:
+        c = yml(pathFile)
+
     n = c.get("name")
     if isinstance(n, str) and n.strip():
         return n.strip()
@@ -128,7 +220,7 @@ def rebuild_index(base_dir):
             if not leaf(dirpath):
                 continue
 
-            found.append((exName(cfg_file), os.path.realpath(dirpath)))
+            found.append((exName(cfg_file, base_dir=root), os.path.realpath(dirpath)))
 
     groups = {}
     for name, path in found:
@@ -181,7 +273,7 @@ def lsRun(args):
                 continue
             cfg = cfg2
 
-        c = yml(cfg)
+        c = load_merged_config(ex_dir, args.base_dir)
         tags = tags_norm(c.get("tags"))
         tags_str = " ".join(tags)
 
