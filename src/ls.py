@@ -157,8 +157,7 @@ def lsRun(args):
         return
 
     tf = (args.tag or "").strip().lower()
-    use_color = getattr(args, 'color', False)
-    hide_done = getattr(args, 'done', False)
+    show_done = getattr(args, 'done', False)
 
     rows = []
 
@@ -182,7 +181,7 @@ def lsRun(args):
         ex_status, ex_time = get_exercise_status(alias)
         
         # Par défaut, ignorer les exercices réussis (sauf si -d activé)
-        if not hide_done and ex_status in ('done_in_time', 'done_overtime'):
+        if not show_done and ex_status in ('done_in_time', 'done_overtime'):
             continue
 
         desc = c.get("description") or ""
@@ -202,11 +201,8 @@ def lsRun(args):
     header = (GREEN + "NAME".ljust(name_w) + RESET + "   " + CYAN + "TAGS".ljust(tags_w) + RESET + "   " + MAGENTA + "DESCRIPTION" + RESET)
 
     print(header)
-    print("-" * (name_w + tags_w + 65))
+    print("-" * (name_w + tags+_w + 65))
 
     for name, tags, desc, status, time_info in rows:
-        if use_color:
-            color = get_status_color(status)
-            print(color + name.ljust(name_w) + RESET + "   " + tags.ljust(tags_w) + "   " + desc)
-        else:
-            print(BLUE + name.ljust(name_w) + RESET + "   " + tags.ljust(tags_w) + "   " + desc)
+        color = get_status_color(status)
+        print(color + name.ljust(name_w) + RESET + "   " + tags.ljust(tags_w) + "   " + desc)
