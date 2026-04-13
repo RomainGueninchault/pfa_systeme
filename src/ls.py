@@ -1,5 +1,6 @@
 import os
 import yaml
+import shutil
 from history import get_status
 
 CFG = ("config.yml", "config.yaml")
@@ -152,6 +153,66 @@ def get_repo_name(ex_dir, base_dir):
     parts = rel_path.split(os.sep)
     return parts[0] if parts else ""
 
+def truncate_string(text, width):
+    """Tronque un texte à une largeur fixe avec '...' si nécessaire."""
+    if len(text) <= width:
+        return text
+    if width <= 3:
+        return text[:width]
+    return text[:width - 3] + "..."
+
+def wrap_description(desc, desc_w):
+    """Découpe une description en lignes de desc_w caractères max."""
+    desc_lines = []
+    remaining = desc
+    while remaining:
+        if len(remaining) <= desc_w:
+            desc_lines.append(remaining)
+            break
+        else:
+            chunk = remaining[:desc_w]
+            last_space = chunk.rfind(' ')
+            
+            if last_space > 0 and last_space > desc_w // 2:
+                desc_lines.append(remaining[:last_space])
+                remaining = remaining[last_space + 1:]
+            else:
+                desc_lines.append(chunk)
+                remaining = remaining[desc_w:]
+    return desc_lines
+
+def format_row_with_wrapping(name, tags, repo, desc, name_w, tags_w, repo_w, desc_w, status):
+    """
+    Formate une ligne complète avec gestion des colonnes.
+    Wrap la description sur plusieurs lignes si elle dépasse desc_w.
+    Retourne une liste de lignes à afficher.
+    """
+    color = get_status_color(status)
+    
+    # Tronquer et padder les colonnes fixes
+    name_part = truncate_string(name, name_w).ljust(name_w)
+    tags_part = truncate_string(tags, tags_w).ljust(tags_w)
+    repo_part = truncate_string(repo, repo_w).ljust(repo_w)
+    
+    lines = []
+    desc_lines = wrap_description(desc, desc_w)
+    
+    # Première ligne avec toutes les colonnes
+    if desc_lines:
+        line = color + name_part + RESET + "     " + tags_part + "     " + repo_part + "     " + desc_lines[0]
+        lines.append(line)
+        
+        # Lignes suivantes pour la description (indentées)
+        indent = " " * (name_w + 5 + tags_w + 5 + repo_w + 5)
+        for desc_line in desc_lines[1:]:
+            lines.append(indent + desc_line)
+    else:
+        # Ligne vide (shouldn't happen)
+        line = color + name_part + RESET + "     " + tags_part + "     " + repo_part
+        lines.append(line)
+    
+    return lines
+
 def yml(pathFile):
     try:
         with open(pathFile, "r", encoding="utf-8") as f:
@@ -182,11 +243,6 @@ def exName(pathFile, base_dir=None):
         return n.strip()
     return os.path.basename(os.path.dirname(pathFile))
 
-def nonempty(label, v):
-    if v is None: return
-    if isinstance(v, str) and not v.strip(): return
-    if isinstance(v, (list, dict)) and not v: return
-    print(f"{label}: {v}")
 
 def tags_norm(v):
     if v is None: return []
@@ -251,6 +307,32 @@ def read_index(base_dir):
     except Exception:
         return {}
 
+def calculate_column_widths(rows, terminal_width):
+    """Calcule les largeurs adaptées des colonnes en fonction du terminal."""
+    name_w = max(len(r[0]) for r in rows)
+    tags_w = max(len(r[1]) for r in rows)
+    repo_w = max(len(r[5]) for r in rows)
+
+    name_w = max(name_w, len("NAME"))
+    tags_w = max(tags_w, len("TAGS"))
+    repo_w = max(repo_w, len("REPO"))
+    
+    # Espacements entre colonnes
+    spacing = 5  # "     "
+    total_fixed = name_w + tags_w + repo_w + (spacing * 3)
+    
+    # Laisser un minimum de 30 caractères pour la description
+    desc_w = max(30, terminal_width - total_fixed - 10)
+    
+    # Si c'est encore trop serré, réduire les colonnes fixes
+    if total_fixed >= terminal_width - 30:
+        name_w = max(5, int(name_w * 0.6))
+        tags_w = max(5, int(tags_w * 0.6))
+        repo_w = max(5, int(repo_w * 0.6))
+        desc_w = max(20, terminal_width - name_w - tags_w - repo_w - (spacing * 3) - 5)
+    
+    return name_w, tags_w, repo_w, desc_w, total_fixed
+
 def lsRun(args):
     idx = read_index(args.base_dir)
     exercises = (idx.get("exercises") if isinstance(idx, dict) else {}) or {}
@@ -298,19 +380,19 @@ def lsRun(args):
         print(RED + "No exercises found." + RESET)
         return
     
-    name_w = max(len(r[0]) for r in rows)
-    tags_w = max(len(r[1]) for r in rows)
-    repo_w = max(len(r[5]) for r in rows)
-
-    name_w = max(name_w, len("NAME"))
-    tags_w = max(tags_w, len("TAGS"))
-    repo_w = max(repo_w, len("REPO"))
-
-    header = (GREEN + "NAME".ljust(name_w) + RESET + "     " + BLUE + "TAGS".ljust(tags_w) + RESET + "     " + ORANGE + "REPO".ljust(repo_w) + RESET + "     " + MAGENTA + "DESCRIPTION" + RESET)
+    # Obtenir la taille du terminal et calculer les largeurs de colonnes
+    terminal_width = shutil.get_terminal_size((80, 24)).columns
+    name_w, tags_w, repo_w, desc_w, total_fixed = calculate_column_widths(rows, terminal_width)
+    
+    # Formater le header avec alignement à gauche
+    header = (GREEN + "NAME".ljust(name_w) + RESET + "     " + 
+              BLUE + "TAGS".ljust(tags_w) + RESET + "     " + 
+              ORANGE + "REPO".ljust(repo_w) + RESET + "     " + 
+              MAGENTA + "DESCRIPTION" + RESET)
 
     print(header)
-    print("-" * (name_w + tags_w + repo_w + 95))
+    print("-" * min(terminal_width - 1, total_fixed + desc_w))
 
     for name, tags, desc, status, time_info, repo in rows:
-        color = get_status_color(status)
-        print(color + name.ljust(name_w) + RESET + "     " + tags.ljust(tags_w) + "     " + repo.ljust(repo_w) + "     " + desc)
+        for line in format_row_with_wrapping(name, tags, repo, desc, name_w, tags_w, repo_w, desc_w, status):
+            print(line)
