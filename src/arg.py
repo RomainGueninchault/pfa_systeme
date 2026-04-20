@@ -19,6 +19,7 @@ parser_ls = subparsers.add_parser('ls', help="List exercises in the base directo
 parser_ls.add_argument("--base-dir", default="~/.trainer", help="Base directory where repositories are installed")
 parser_ls.add_argument("--tag", default="", help="Filter exercises by tag substring")
 parser_ls.add_argument("-d", "--done", action="store_true", help="Show exercises that are already done (by default they are hidden)")
+parser_ls.add_argument("-r", "--repo", default="", help="Filter exercises by repository name (e.g., exercices2A)")
 
 
 parser_exec = subparsers.add_parser('exec', help="Open a temporary exec shell for an exercise")

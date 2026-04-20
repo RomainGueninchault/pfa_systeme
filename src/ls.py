@@ -181,7 +181,7 @@ def wrap_description(desc, desc_w):
                 remaining = remaining[desc_w:]
     return desc_lines
 
-def format_row_with_wrapping(name, tags, repo, desc, name_w, tags_w, repo_w, desc_w, status):
+def format_row_with_wrapping(name, tags, repo, desc, name_w, tags_w, repo_w, desc_w, status, show_repo=True):
     """
     Formate une ligne complète avec gestion des colonnes.
     Wrap la description sur plusieurs lignes si elle dépasse desc_w.
@@ -192,23 +192,32 @@ def format_row_with_wrapping(name, tags, repo, desc, name_w, tags_w, repo_w, des
     # Tronquer et padder les colonnes fixes
     name_part = truncate_string(name, name_w).ljust(name_w)
     tags_part = truncate_string(tags, tags_w).ljust(tags_w)
-    repo_part = truncate_string(repo, repo_w).ljust(repo_w)
-    
+
     lines = []
     desc_lines = wrap_description(desc, desc_w)
     
     # Première ligne avec toutes les colonnes
     if desc_lines:
-        line = color + name_part + RESET + "     " + tags_part + "     " + repo_part + "     " + desc_lines[0]
+        if show_repo:
+            repo_part = truncate_string(repo, repo_w).ljust(repo_w)
+            line = color + name_part + RESET + "     " + tags_part + "     " + repo_part + "     " + desc_lines[0]
+            indent = " " * (name_w + 5 + tags_w + 5 + repo_w + 5)
+        else:
+            line = color + name_part + RESET + "     " + tags_part + "     " + desc_lines[0]
+            indent = " " * (name_w + 5 + tags_w + 5)
+
         lines.append(line)
         
         # Lignes suivantes pour la description (indentées)
-        indent = " " * (name_w + 5 + tags_w + 5 + repo_w + 5)
         for desc_line in desc_lines[1:]:
             lines.append(indent + desc_line)
     else:
-        # Ligne vide (shouldn't happen)
-        line = color + name_part + RESET + "     " + tags_part + "     " + repo_part
+        # Ligne vide
+        if show_repo:
+            repo_part = truncate_string(repo, repo_w).ljust(repo_w)
+            line = color + name_part + RESET + "     " + tags_part + "     " + repo_part
+        else:
+            line = color + name_part + RESET + "     " + tags_part
         lines.append(line)
     
     return lines
@@ -307,20 +316,25 @@ def read_index(base_dir):
     except Exception:
         return {}
 
-def calculate_column_widths(rows, terminal_width):
+def calculate_column_widths(rows, terminal_width, show_repo=True):
     """Calcule les largeurs adaptées des colonnes en fonction du terminal."""
     name_w = max(len(r[0]) for r in rows)
     tags_w = max(len(r[1]) for r in rows)
-    repo_w = max(len(r[5]) for r in rows)
 
     name_w = max(name_w, len("NAME"))
     tags_w = max(tags_w, len("TAGS"))
-    repo_w = max(repo_w, len("REPO"))
-    
+
     # Espacements entre colonnes
     spacing = 5  # "     "
-    total_fixed = name_w + tags_w + repo_w + (spacing * 3)
-    
+
+    if show_repo:
+        repo_w = max(len(r[5]) for r in rows)
+        repo_w = max(repo_w, len("REPO"))
+        total_fixed = name_w + tags_w + repo_w + (spacing * 3)
+    else:
+        repo_w = 0
+        total_fixed = name_w + tags_w + (spacing * 2)
+
     # Laisser un minimum de 30 caractères pour la description
     desc_w = max(30, terminal_width - total_fixed - 10)
     
@@ -328,9 +342,13 @@ def calculate_column_widths(rows, terminal_width):
     if total_fixed >= terminal_width - 30:
         name_w = max(5, int(name_w * 0.6))
         tags_w = max(5, int(tags_w * 0.6))
-        repo_w = max(5, int(repo_w * 0.6))
-        desc_w = max(20, terminal_width - name_w - tags_w - repo_w - (spacing * 3) - 5)
-    
+        if show_repo:
+            repo_w = max(5, int(repo_w * 0.6))
+            total_fixed = name_w + tags_w + repo_w + (spacing * 3)
+        else:
+            total_fixed = name_w + tags_w + (spacing * 2)
+        desc_w = max(20, terminal_width - total_fixed - 5)
+
     return name_w, tags_w, repo_w, desc_w, total_fixed
 
 def lsRun(args):
@@ -343,6 +361,7 @@ def lsRun(args):
 
     tf = (args.tag or "").strip().lower()
     show_done = getattr(args, 'done', False)
+    repo_filter = (args.repo or "").strip() if hasattr(args, 'repo') else ""
 
     rows = []
 
@@ -354,6 +373,12 @@ def lsRun(args):
             if not os.path.isfile(cfg2):
                 continue
             cfg = cfg2
+
+        # Appliquer le filtre par répertoire si spécifié
+        if repo_filter:
+            repo_name = get_repo_name(ex_dir, args.base_dir)
+            if repo_name != repo_filter:
+                continue
 
         c = load_merged_config(ex_dir, args.base_dir)
         tags = tags_norm(c.get("tags"))
@@ -380,19 +405,27 @@ def lsRun(args):
         print(RED + "No exercises found." + RESET)
         return
     
+    # Déterminer si on affiche la colonne REPO
+    show_repo = not repo_filter
+
     # Obtenir la taille du terminal et calculer les largeurs de colonnes
     terminal_width = shutil.get_terminal_size((80, 24)).columns
-    name_w, tags_w, repo_w, desc_w, total_fixed = calculate_column_widths(rows, terminal_width)
-    
+    name_w, tags_w, repo_w, desc_w, total_fixed = calculate_column_widths(rows, terminal_width, show_repo=show_repo)
+
     # Formater le header avec alignement à gauche
-    header = (GREEN + "NAME".ljust(name_w) + RESET + "     " + 
-              BLUE + "TAGS".ljust(tags_w) + RESET + "     " + 
-              ORANGE + "REPO".ljust(repo_w) + RESET + "     " + 
-              MAGENTA + "DESCRIPTION" + RESET)
+    if show_repo:
+        header = (GREEN + "NAME".ljust(name_w) + RESET + "     " +
+                  BLUE + "TAGS".ljust(tags_w) + RESET + "     " +
+                  ORANGE + "REPO".ljust(repo_w) + RESET + "     " +
+                  MAGENTA + "DESCRIPTION" + RESET)
+    else:
+        header = (GREEN + "NAME".ljust(name_w) + RESET + "     " +
+                  BLUE + "TAGS".ljust(tags_w) + RESET + "     " +
+                  MAGENTA + "DESCRIPTION" + RESET)
 
     print(header)
     print("-" * min(terminal_width - 1, total_fixed + desc_w))
 
     for name, tags, desc, status, time_info, repo in rows:
-        for line in format_row_with_wrapping(name, tags, repo, desc, name_w, tags_w, repo_w, desc_w, status):
+        for line in format_row_with_wrapping(name, tags, repo, desc, name_w, tags_w, repo_w, desc_w, status, show_repo=show_repo):
             print(line)
