@@ -1,4 +1,5 @@
 import os
+import shutil
 import yaml
 import subprocess
 from history import record_done, record_failed
@@ -50,6 +51,35 @@ def validateExercice(user_dir=None, base_dir=None):
     if not exo_alias:
         print(f"{RED}Variable TRAINER_ALIAS non définie{RESET}")
         return False
+    
+    if config and config.get('language') == "javascript":
+        index = read_index(base_dir)
+        
+        exercises = index.get("exercises", {})
+        
+        if exo_alias not in exercises:
+            print(f"{RED}Alias inconnu dans l'index{RESET}")
+            return False
+        
+        real_base = exercises[exo_alias]
+
+        test_files = config.get("test", [])
+        if not isinstance(test_files, list):
+            print(f"{RED}Champ 'test' doit être une liste{RESET}")
+            return False
+
+        for file in test_files:
+            src = os.path.join(real_base, file)
+            dst = os.path.join(user_dir, file)
+
+            if not os.path.isfile(src):
+                print(f"{YELLOW}Fichier test introuvable: {src}{RESET}")
+                continue
+
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            shutil.copy(src, dst)
+
+        print(f"{BLUE}Fichiers de test copiés (JS){RESET}")
 
     validate_cmd = None
     if config and 'commands' in config and 'validate' in config['commands']:
