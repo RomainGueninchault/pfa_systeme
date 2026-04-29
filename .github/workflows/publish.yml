@@ -49,6 +49,6 @@ jobs:
           path: dist/
 
       - name: Publier sur PyPI
-        uses: pypa/gh-action-pypi-publish@76f52bc884231f62a99e3ab34e3f9d1c9a1a0f26  # release/v1 @ 2025-04
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           attestations: true
