@@ -2,6 +2,7 @@ import os
 import yaml
 import tempfile
 import shutil
+from ls import load_merged_config
 
 BD = ".trainer_index.yml"
 
@@ -54,14 +55,11 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
     if os.path.isdir(common_candidate):
         common_path = common_candidate
 
-    # lire config.yml de l'exercice (toujours)
-    config_path = os.path.join(exo_path, "config.yml")
-    if not os.path.isfile(config_path):
-        print(f"No config in the exercice: {exercice_name}, please contact the owner")
+    # lire config.yml fusionné (repo + exercice)
+    config = load_merged_config(exo_path, home)
+    if not config:
+        print(f"No config found for exercice: {exercice_name}, please contact the owner")
         return False
-
-    with open(config_path, "r", encoding="utf-8") as f:
-        config = yaml.safe_load(f) or {}
 
     # Création du dossier temporaire
     tmp_dir = tempfile.mkdtemp(prefix='trainer_')
@@ -69,6 +67,11 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
     shutil.copytree(exo_path, exo_tmp)
     if common_path:
         shutil.copytree(common_path, exo_tmp, dirs_exist_ok=True)
+
+    # Écrire le config fusionné dans le dossier temporaire (pour avoir validate du repo si besoin)
+    merged_config_path = os.path.join(exo_tmp, "config.yml")
+    with open(merged_config_path, "w", encoding="utf-8") as f:
+        yaml.safe_dump(config, f, sort_keys=False, allow_unicode=True)
     # print(f"Exercice et commun copiés dans {exo_tmp}")
 
     # Compilation/Préparation (commande 'prepare' dans config.yml)
@@ -85,6 +88,7 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
             return False
 
     # Copie uniquement les fichiers/dossiers listés dans 'distribute'/'distributes' du config.yml vers le dossier cible
+    distributed_sources = set()  # Tracker les fichiers source qui ont été distribués
     if config:
         distribute_files = []
         if 'distribute' in config:
@@ -95,20 +99,68 @@ def installExercice(exercice_name, base_dir=None, user_dir=None):
             distribute_files = config['distributes']
             if isinstance(distribute_files, str):
                 distribute_files = [distribute_files]
-        if 'config.yml' not in distribute_files:
+
+        # Ajouter config.yml s'il ne figure pas dans la liste
+        if not isinstance(distribute_files, list):
+            distribute_files = []
+
+        # Vérifier que config.yml est dans la liste (as string, not as dict)
+        has_config_yml = any(\
+            (isinstance(item, str) and item == 'config.yml') or \
+            (isinstance(item, dict) and 'config.yml' in item) \
+            for item in distribute_files\
+        )
+        if not has_config_yml:
             distribute_files.append('config.yml')
-        for rel_path in distribute_files:
-            src_path = os.path.join(exo_tmp, rel_path)
-            dest_path = os.path.join(target_dir, rel_path)
-            if os.path.exists(src_path):
-                if os.path.isdir(src_path):
-                    if os.path.exists(dest_path):
-                        shutil.rmtree(dest_path)
-                    shutil.copytree(src_path, dest_path)
+
+        if distribute_files:
+            for item in distribute_files:
+                # Gérer à la fois les strings et les mappings (source: destination)
+                if isinstance(item, dict):
+                    # Format: {source: destination}
+                    for src_rel, dest_rel in item.items():
+                        src_path = os.path.join(exo_tmp, src_rel)
+                        dest_path = os.path.join(target_dir, dest_rel)
+                        distributed_sources.add(src_rel)  # Tracker le fichier source
+                        if os.path.exists(src_path):
+                            if os.path.isdir(src_path):
+                                if os.path.exists(dest_path):
+                                    shutil.rmtree(dest_path)
+                                shutil.copytree(src_path, dest_path)
+                            else:
+                                os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+                                shutil.copy2(src_path, dest_path)
                 else:
-                    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-                    shutil.copy2(src_path, dest_path)
-        print(f"{BLUE}Exercice is ready on {RESET}{target_dir}")
+                    # Format: string simple
+                    rel_path = str(item)
+                    src_path = os.path.join(exo_tmp, rel_path)
+                    dest_path = os.path.join(target_dir, rel_path)
+                    distributed_sources.add(rel_path)  # Tracker le fichier source
+                    if os.path.exists(src_path):
+                        if os.path.isdir(src_path):
+                            if os.path.exists(dest_path):
+                                shutil.rmtree(dest_path)
+                            shutil.copytree(src_path, dest_path)
+                        else:
+                            os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+                            shutil.copy2(src_path, dest_path)
+            print(f"{BLUE}Exercice is ready on {RESET}{target_dir}")
+
+    # Copier aussi les fichiers du common qui n'ont pas déjà été distribués
+    if common_path and os.path.isdir(common_path):
+        for item in os.listdir(common_path):
+            # Ne pas copier les fichiers qui ont été listés comme source dans distribute
+            if item in distributed_sources:
+                continue
+
+            src_item = os.path.join(common_path, item)
+            dest_item = os.path.join(target_dir, item)
+            # Ne pas écrase les fichiers déjà distribués ou créés
+            if not os.path.exists(dest_item):
+                if os.path.isdir(src_item):
+                    shutil.copytree(src_item, dest_item)
+                else:
+                    shutil.copy2(src_item, dest_item)
 
     # Nettoyage du dossier temporaire
     shutil.rmtree(tmp_dir)
