@@ -1,3 +1,8 @@
+"""Repository import and update module.
+
+Manages importing new exercise repositories and pulling updates from remote
+repositories with git integration.
+"""
 from ls import rebuild_index
 import subprocess
 import shutil
@@ -14,6 +19,15 @@ CYAN    = "\033[36m"
 
 
 def _run_git(args, cwd=None):
+    """Execute a git command.
+    
+    Args:
+        args: List of git command arguments.
+        cwd: Working directory for the command.
+        
+    Returns:
+        tuple: (success, stdout, stderr)
+    """
     try:
         result = subprocess.run(
             ["git", *args],
@@ -30,11 +44,27 @@ def _run_git(args, cwd=None):
 
 
 def _is_git_repo(path):
+    """Check if a directory is a git repository.
+    
+    Args:
+        path: Directory path to check.
+        
+    Returns:
+        bool: True if it's a git repository, False otherwise.
+    """
     ok, out, _ = _run_git(["rev-parse", "--is-inside-work-tree"], cwd=path)
     return ok and out == "true"
 
 
 def _has_local_changes(path):
+    """Check if a repository has local changes.
+    
+    Args:
+        path: Repository path.
+        
+    Returns:
+        bool: True if there are uncommitted changes, False otherwise.
+    """
     ok, out, _ = _run_git(["status", "--porcelain"], cwd=path)
     if not ok:
         return True
@@ -42,11 +72,28 @@ def _has_local_changes(path):
 
 
 def _current_branch(path):
+    """Get the current git branch name.
+    
+    Args:
+        path: Repository path.
+        
+    Returns:
+        str or None: Branch name, or None if detached HEAD.
+    """
     ok, out, _ = _run_git(["symbolic-ref", "--short", "HEAD"], cwd=path)
     return out if ok else None
 
 
 def _ensure_upstream(path, branch):
+    """Ensure upstream branch is configured.
+    
+    Args:
+        path: Repository path.
+        branch: Branch name.
+        
+    Returns:
+        str or None: Upstream branch reference, or None on error.
+    """
     ok, out, _ = _run_git(["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"], cwd=path)
     if ok and out:
         return out
@@ -67,6 +114,14 @@ def _ensure_upstream(path, branch):
 
 
 def _pull_one_repo(repo_path):
+    """Pull updates from a single repository.
+    
+    Args:
+        repo_path: Path to the repository.
+        
+    Returns:
+        str: Status of the pull operation (updated, unchanged, skipped, failed).
+    """
     name = repo_path.name
 
     if not repo_path.is_dir():
@@ -134,6 +189,14 @@ def _pull_one_repo(repo_path):
 
 
 def pullRun(args):
+    """Pull updates for exercise repositories.
+    
+    Args:
+        args: Command-line arguments containing base_dir and optional repo filter.
+        
+    Returns:
+        bool: True if all pulls succeeded, False if any failed.
+    """
     if shutil.which("git") is None:
         print(f"{RED}git doesn't exist{RESET}")
         return False
@@ -172,6 +235,11 @@ def pullRun(args):
 
 
 def importRun(args):
+    """Import a new exercise repository.
+    
+    Args:
+        args: Command-line arguments containing the URL and base_dir.
+    """
     if shutil.which("git") is None:
         print(f"{RED}git doesn't exist{RESET}")
         sys.exit(1)

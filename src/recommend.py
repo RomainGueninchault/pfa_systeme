@@ -1,3 +1,8 @@
+"""Exercise recommendation engine module.
+
+Provides intelligent recommendations for exercises based on a reference
+exercise using similarity metrics like Jaccard index and tag analysis.
+"""
 import os
 import argparse
 from typing import Any, Dict, List, Optional, Set
@@ -22,6 +27,14 @@ CFG_NAMES = ("config.yml", "config.yaml")
 
 
 def yml(path):
+    """Load YAML file safely.
+    
+    Args:
+        path: Path to the YAML file.
+        
+    Returns:
+        dict: Parsed YAML content, or empty dict on error.
+    """
     try:
         with open(path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f) or {}
@@ -31,6 +44,14 @@ def yml(path):
 
     
 def find_config(exo_dir):
+    """Find configuration file in exercise directory.
+    
+    Args:
+        exo_dir: Exercise directory to search.
+        
+    Returns:
+        str or None: Path to config file, or None if not found.
+    """
     for name in CFG_NAMES:
         path = os.path.join(exo_dir, name)
         if os.path.isfile(path):
@@ -38,8 +59,16 @@ def find_config(exo_dir):
     return None
 
 
-# cfg est returne par yml sur config.yml
+# cfg is returned by yml on config.yml
 def parse_difficulty(cfg):
+    """Parse difficulty value from exercise configuration.
+    
+    Args:
+        cfg: Exercise configuration dictionary.
+        
+    Returns:
+        float or None: Difficulty value, or None if not set or invalid.
+    """
     value = cfg.get("difficulty")
     if value is None:
         return None
@@ -50,6 +79,14 @@ def parse_difficulty(cfg):
 
 
 def parse_timeout_minutes(cfg):
+    """Parse timeout value in minutes from exercise configuration.
+    
+    Args:
+        cfg: Exercise configuration dictionary.
+        
+    Returns:
+        float or None: Timeout in minutes, or None if not set or invalid.
+    """
     value = cfg.get("timeout")
     if value is None:
         return None
@@ -58,8 +95,16 @@ def parse_timeout_minutes(cfg):
     except (TypeError, ValueError):
         return None
 
-# return Dict[str, Dict[str, Any]] la premier str est le nom de l´ex et les autres sont les meta-donnes
+# return Dict[str, Dict[str, Any]] first str is exercise name and others are metadata
 def get_exercise_catalog(base_dir: str) -> Dict[str, Dict[str, Any]]:
+    """Build a catalog of all exercises with metadata.
+    
+    Args:
+        base_dir: Base directory containing exercises.
+        
+    Returns:
+        dict: Catalog mapping exercise aliases to their metadata.
+    """
     base_dir = os.path.expanduser(base_dir)
     idx = read_index(base_dir)
     exercises = (idx.get("exercises") if isinstance(idx, dict) else {}) or {}
@@ -93,9 +138,18 @@ def get_exercise_catalog(base_dir: str) -> Dict[str, Dict[str, Any]]:
     return catalog
 
 
-# https://fr.wikipedia.org/wiki/Indice_et_distance_de_Jaccard
-# a et b sont Set[str]
+# https://en.wikipedia.org/wiki/Jaccard_index
+# a and b are Set[str]
 def jaccard(a, b):
+    """Calculate Jaccard similarity between two sets.
+    
+    Args:
+        a: First set.
+        b: Second set.
+        
+    Returns:
+        float: Jaccard similarity score between 0 and 1.
+    """
     if not a and not b:
         return 1.0
     union = a | b
@@ -105,6 +159,14 @@ def jaccard(a, b):
 
 
 def format_difficulty(value: Optional[float]) -> str:
+    """Format difficulty value for display.
+    
+    Args:
+        value: Difficulty value.
+        
+    Returns:
+        str: Formatted difficulty string.
+    """
     if value is None:
         return "-"
     value = float(value)
@@ -112,6 +174,14 @@ def format_difficulty(value: Optional[float]) -> str:
 
 
 def format_timeout(value: Optional[float]) -> str:
+    """Format timeout value for display.
+    
+    Args:
+        value: Timeout in minutes.
+        
+    Returns:
+        str: Formatted timeout string.
+    """
     if value is None:
         return "-"
     value = float(value)
@@ -119,19 +189,40 @@ def format_timeout(value: Optional[float]) -> str:
 
 
 def format_status(raw_status: Optional[str]) -> str:
+    """Format exercise status for display.
+    
+    Args:
+        raw_status: Raw status string from history.
+        
+    Returns:
+        str: Human-readable status string.
+    """
     if raw_status == "done":
-        return "fait avec succes"
+        return "completed successfully"
     if raw_status == "failed":
-        return "fait avec echec"
-    return "pas encore fait"
+        return "completed with failure"
+    return "not yet completed"
 
 
 def recommend_exercises(reference_ex: str, base_dir = "~/.trainer", top_k = 5, exclude_done = True, require_same_or_higher_difficulty = True, min_common_tags = 1):
+    """Recommend exercises similar to a reference exercise.
+    
+    Args:
+        reference_ex: Alias of the reference exercise.
+        base_dir: Base directory for exercises.
+        top_k: Maximum number of recommendations.
+        exclude_done: Whether to exclude completed exercises.
+        require_same_or_higher_difficulty: Filter by difficulty.
+        min_common_tags: Minimum common tags required.
+        
+    Returns:
+        list: Recommended exercises sorted by relevance.
+    """
     catalog = get_exercise_catalog(base_dir)
     ref = catalog.get(reference_ex)
 
     if ref is None:
-        raise ValueError(f"Exercise alias introuvable: {reference_ex}")
+        raise ValueError(f"Exercise alias not found: {reference_ex}")
 
     ref_tags = ref["tags_set"]
     ref_difficulty = ref["difficulty"]
@@ -168,8 +259,8 @@ def recommend_exercises(reference_ex: str, base_dir = "~/.trainer", top_k = 5, e
                 "jaccard": jaccard(ref_tags, exo["tags_set"]),
             }
         )
-        # dans cette algo la priorite est la suivant
-        # on priorise les exercices apres grand nombre tag commun apres la similarite apres difficulte apres ordre alphabetique
+        # In this algorithm the priority is as follows:
+        # prioritize exercises by number of common tags, then by similarity, then by difficulty, then alphabetically
     results.sort(
         key=lambda e: (
             -e["common_count"],
@@ -183,12 +274,18 @@ def recommend_exercises(reference_ex: str, base_dir = "~/.trainer", top_k = 5, e
 
 
 def print_recommendations(reference_ex, recs):
+    """Display exercise recommendations in formatted output.
+    
+    Args:
+        reference_ex: Alias of the reference exercise.
+        recs: List of recommended exercises.
+    """
     print()
-    print(f"{BOLD}{CYAN}Recommandations basees sur :{RESET} {reference_ex}")
+    print(f"{BOLD}{CYAN}Recommendations based on:{RESET} {reference_ex}")
     print(f"{DIM}{'-' * 64}{RESET}")
 
     if not recs:
-        print("Aucune recommandation trouvee.")
+        print("No recommendations found.")
         print()
         return
 
@@ -207,15 +304,23 @@ def print_recommendations(reference_ex, recs):
             status_text = status_label
 
         print(f"{BOLD}{i}. {r['alias']}{RESET}")
-        print(f"   difficulte  : {diff}")
-        print(f"   tags communs: {tags_communs}")
-        print(f"   temps       : {temps}")
+        print(f"   difficulty  : {diff}")
+        print(f"   common tags : {tags_communs}")
+        print(f"   time        : {temps}")
         print(f"   status      : {status_text}")
         print(f"   description : {desc}")
         print(f"{DIM}{'-' * 64}{RESET}")
         
 
 def recommendRun(args) -> bool:
+    """Process recommendation command-line request.
+    
+    Args:
+        args: Command-line arguments.
+        
+    Returns:
+        bool: True if successful, False on error.
+    """
     try:
         recs = recommend_exercises(
             reference_ex=args.reference_alias,
@@ -228,9 +333,9 @@ def recommendRun(args) -> bool:
         print_recommendations(args.reference_alias, recs)
         return True
     except ValueError as e:
-        print(f"Erreur: {e}")
+        print(f"Error: {e}")
         return False
     except Exception as e:
-        print(f"Erreur inattendue: {e}")
+        print(f"Unexpected error: {e}")
         return False
 

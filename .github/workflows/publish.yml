@@ -7,7 +7,7 @@ on:
 
 concurrency:
   group: pypi-publish
-  cancel-in-progress: false  # Never cancel an in-flight publish
+  cancel-in-progress: false 
 
 jobs:
   build:
@@ -19,16 +19,16 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Installer les outils de build
+      - name: Install build tools
         run: pip install build twine
 
-      - name: Builder le package
+      - name: Build the package
         run: python -m build
 
-      - name: Vérifier les métadonnées du package
+      - name: Check package metadata
         run: twine check dist/*
 
-      - name: Sauvegarder les artefacts
+      - name: Save artifacts
         uses: actions/upload-artifact@v4
         with:
           name: dist
@@ -42,13 +42,13 @@ jobs:
       id-token: write
 
     steps:
-      - name: Récupérer les artefacts
+      - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist/
 
-      - name: Publier sur PyPI
+      - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           attestations: true

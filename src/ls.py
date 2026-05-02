@@ -1,3 +1,9 @@
+"""Exercise listing and indexing module.
+
+Provides functionality to list exercises, rebuild the exercise index,
+merge configurations from repository and exercise directories, and format
+exercise information for display.
+"""
 import os
 import yaml
 import shutil
@@ -15,8 +21,16 @@ MAGENTA = "\033[35m"
 CYAN    = "\033[36m"
 ORANGE  = "\033[38;5;208m"
 
-# pour la recusivite
+# for recursion
 def find_cfg_in_dir(dirpath):
+    """Find a configuration file in a directory.
+    
+    Args:
+        dirpath: Directory to search for config files.
+        
+    Returns:
+        str or None: Path to config file, or None if not found.
+    """
     for fn in CFG:
         p = os.path.join(dirpath, fn)
         if os.path.isfile(p):
@@ -25,6 +39,15 @@ def find_cfg_in_dir(dirpath):
 
 
 def merge_tags(parent_value, child_value):
+    """Merge tag lists from parent and child configurations.
+    
+    Args:
+        parent_value: Parent configuration tags.
+        child_value: Child configuration tags.
+        
+    Returns:
+        list: Merged tags with deduplication.
+    """
     merged = []
     seen = set()
 
@@ -39,10 +62,10 @@ def merge_tags(parent_value, child_value):
 
 def deep_merge(parent, child):
     """
-    Fusion parent -> enfant.
-    - dict + dict  => fusion récursive
-    - tags         => concat + déduplication
-    - sinon        => la valeur enfant écrase la valeur parent
+    Merge parent -> child.
+    - dict + dict  => recursive merge
+    - tags         => concatenate + deduplication
+    - otherwise    => child value overwrites parent value
     """
     if not isinstance(parent, dict):
         parent = {}
@@ -66,8 +89,8 @@ def deep_merge(parent, child):
 
 def load_merged_config(ex_dir, base_dir):
     """
-    Remonte depuis la feuille jusqu'à la racine du repo
-    et fusionne tous les YAML trouvés.
+    Climb from leaf to repository root
+    and merge all YAML files found.
     """
     root = os.path.realpath(os.path.expanduser(base_dir))
     ex_dir = os.path.realpath(ex_dir)
@@ -96,21 +119,21 @@ def load_merged_config(ex_dir, base_dir):
         current = parent
 
     merged = {}
-    for cfg_path in reversed(stack):   # racine -> feuille
+    for cfg_path in reversed(stack):   # root -> leaf
         merged = deep_merge(merged, yml(cfg_path))
 
     return merged
 
 
 def get_exercise_status(alias):
-    """Retourne le statut de l'exercice : (status, time).
+    """Returns the exercise status: (status, time).
     
-    Status peut être:
-    - 'not_started' : pas d'historique
-    - 'started' : commencé mais pas réussi/échoué
-    - 'failed' : tenté mais échoué
-    - 'done_in_time' : réussi dans le temps imparti
-    - 'done_overtime' : réussi mais dépassement du temps
+    Status can be:
+    - 'not_started' : no history
+    - 'started' : started but not completed/failed
+    - 'failed' : attempted but failed
+    - 'done_in_time' : completed within time limit
+    - 'done_overtime' : completed but exceeded time limit
     """
     entry = get_status(alias)
 
@@ -132,7 +155,7 @@ def get_exercise_status(alias):
     return ('not_started', None)
 
 def get_status_color(status):
-    """Retourne la couleur ANSI pour un statut donné."""
+    """Returns the ANSI color for a given status."""
     color_map = {
         'not_started': CYAN,
         'started': YELLOW,
@@ -143,9 +166,9 @@ def get_status_color(status):
     return color_map.get(status, CYAN)
 
 def get_repo_name(ex_dir, base_dir):
-    """Extrait le nom du dépôt depuis le chemin de l'exercice.
+    """Extract the repository name from the exercise path.
     
-    Retourne le nom du répertoire immédiatement après la base_dir.
+    Returns the directory name immediately after base_dir.
     Ex: ~/.trainer/mon_repo/exercise -> mon_repo
     """
     root = os.path.expanduser(base_dir)
@@ -154,7 +177,7 @@ def get_repo_name(ex_dir, base_dir):
     return parts[0] if parts else ""
 
 def truncate_string(text, width):
-    """Tronque un texte à une largeur fixe avec '...' si nécessaire."""
+    """Truncates text to a fixed width with '...' if necessary."""
     if len(text) <= width:
         return text
     if width <= 3:
@@ -162,7 +185,7 @@ def truncate_string(text, width):
     return text[:width - 3] + "..."
 
 def wrap_description(desc, desc_w):
-    """Découpe une description en lignes de desc_w caractères max."""
+    """Split a description into lines of max desc_w characters."""
     desc_lines = []
     remaining = desc
     while remaining:
@@ -183,9 +206,9 @@ def wrap_description(desc, desc_w):
 
 def format_row_with_wrapping(name, tags, repo, desc, name_w, tags_w, repo_w, desc_w, status, show_repo=True):
     """
-    Formate une ligne complète avec gestion des colonnes.
-    Wrap la description sur plusieurs lignes si elle dépasse desc_w.
-    Retourne une liste de lignes à afficher.
+    Format a complete row with column management.
+    Wrap the description on multiple lines if it exceeds desc_w.
+    Returns a list of lines to display.
     """
     color = get_status_color(status)
     
@@ -223,6 +246,14 @@ def format_row_with_wrapping(name, tags, repo, desc, name_w, tags_w, repo_w, des
     return lines
 
 def yml(pathFile):
+    """Load YAML file safely.
+    
+    Args:
+        pathFile: Path to the YAML file.
+        
+    Returns:
+        dict: Parsed YAML content, or empty dict on error.
+    """
     try:
         with open(pathFile, "r", encoding="utf-8") as f:
             d = yaml.safe_load(f)
@@ -230,8 +261,15 @@ def yml(pathFile):
     except Exception:
         return {}
 
-# we work with tree logic for DB    
 def leaf(dirpath):
+    """Check if a directory is a leaf (contains no subdirectories).
+    
+    Args:
+        dirpath: Directory path to check.
+        
+    Returns:
+        bool: True if directory has no subdirectories, False otherwise.
+    """
     try:
         for name in os.listdir(dirpath):
             if os.path.isdir(os.path.join(dirpath, name)):
@@ -241,6 +279,15 @@ def leaf(dirpath):
         return False
 
 def exName(pathFile, base_dir=None):
+    """Extract exercise name from configuration.
+    
+    Args:
+        pathFile: Path to the config file.
+        base_dir: Base directory for merged config (optional).
+        
+    Returns:
+        str: Exercise name from config or directory basename.
+    """
     if base_dir is not None:
         ex_dir = os.path.dirname(pathFile)
         c = load_merged_config(ex_dir, base_dir)
@@ -254,6 +301,14 @@ def exName(pathFile, base_dir=None):
 
 
 def tags_norm(v):
+    """Normalize tags from various formats.
+    
+    Args:
+        v: Tags in various formats (list, string, comma-separated, space-separated).
+        
+    Returns:
+        list: Normalized tag list.
+    """
     if v is None: return []
     if isinstance(v, list): return [str(x).strip() for x in v if str(x).strip()]
     s = str(v).strip()
@@ -261,6 +316,11 @@ def tags_norm(v):
     return [t.strip() for t in s.split(",")] if "," in s else s.split()
 
 def rebuild_index(base_dir):
+    """Rebuild the exercise index from the repository structure.
+    
+    Args:
+        base_dir: Base directory containing exercise repositories.
+    """
     root = os.path.expanduser(base_dir)
     
     found = [] 
@@ -270,7 +330,7 @@ def rebuild_index(base_dir):
             continue
 
         for dirpath, dirnames, filenames in os.walk(repo_path):
-            # ignore config à la racine du repo
+            # ignore config at repository root
             if dirpath == repo_path:
                 continue
 
@@ -305,6 +365,14 @@ def rebuild_index(base_dir):
     return out_path
 
 def read_index(base_dir):
+    """Read the exercise index file.
+    
+    Args:
+        base_dir: Base directory for the index.
+        
+    Returns:
+        dict: The index data, or empty dict if not found.
+    """
     root = os.path.expanduser(base_dir)
     p = os.path.join(root, INDEX)
     if not os.path.isfile(p):
@@ -317,14 +385,23 @@ def read_index(base_dir):
         return {}
 
 def calculate_column_widths(rows, terminal_width, show_repo=True):
-    """Calcule les largeurs adaptées des colonnes en fonction du terminal."""
+    """Calculate appropriate column widths based on terminal width.
+    
+    Args:
+        rows: List of exercise rows to display.
+        terminal_width: Width of the terminal.
+        show_repo: Whether to include repository name column.
+        
+    Returns:
+        tuple: (name_width, tags_width, repo_width, description_width, total_fixed_width)
+    """
     name_w = max(len(r[0]) for r in rows)
     tags_w = max(len(r[1]) for r in rows)
 
     name_w = max(name_w, len("NAME"))
     tags_w = max(tags_w, len("TAGS"))
 
-    # Espacements entre colonnes
+    # spacing between columns
     spacing = 5  # "     "
 
     if show_repo:
@@ -335,10 +412,9 @@ def calculate_column_widths(rows, terminal_width, show_repo=True):
         repo_w = 0
         total_fixed = name_w + tags_w + (spacing * 2)
 
-    # Laisser un minimum de 30 caractères pour la description
+    # description takes the remaining space, at least 30 chars
     desc_w = max(30, terminal_width - total_fixed - 10)
     
-    # Si c'est encore trop serré, réduire les colonnes fixes
     if total_fixed >= terminal_width - 30:
         name_w = max(5, int(name_w * 0.6))
         tags_w = max(5, int(tags_w * 0.6))
@@ -352,6 +428,15 @@ def calculate_column_widths(rows, terminal_width, show_repo=True):
     return name_w, tags_w, repo_w, desc_w, total_fixed
 
 def lsRun(args):
+    """List exercises with filtering and formatting.
+    
+    Displays exercises from the index with support for filtering by tags,
+    repository, and completion status. Formats output with proper column
+    alignment and status colors.
+    
+    Args:
+        args: Command-line arguments containing base_dir, tag, done, and repo filters.
+    """
     idx = read_index(args.base_dir)
     exercises = (idx.get("exercises") if isinstance(idx, dict) else {}) or {}
 

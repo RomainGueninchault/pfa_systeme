@@ -1,3 +1,8 @@
+"""Command-line argument parser configuration for the trainer application.
+
+Defines argument parsers for all subcommands including import, install, list,
+exec, check, update, stats, and recommend.
+"""
 import argparse
 
 argParser = argparse.ArgumentParser(prog='trainer')
@@ -9,9 +14,9 @@ parser_import=subparsers.add_parser('import',help="add a new repository")
 parser_import.add_argument('url',help="git url of the respository")
 parser_import.add_argument("--base-dir", default="~/.trainer", help="Base directory for import")
 
-parser_install = subparsers.add_parser('install', help="Install an exercice")
+parser_install = subparsers.add_parser('install', help="Install an exercise")
 parser_install.add_argument("--base-dir", default="~/.trainer", help="Base directory for exercises")
-parser_install.add_argument('exs', help="name of exercice")
+parser_install.add_argument('exs', help="name of exercise")
 parser_install.add_argument("--user-dir", default=None, help="User directory for installation")
 
 parser_ls = subparsers.add_parser('ls', help="List exercises in the base directory")
@@ -38,12 +43,12 @@ parser_stats = subparsers.add_parser('stats', help="List the exercises that have
 parser_stats.add_argument("--filter", default="", help="Filter the stats by status")
 
 parser_recommend = subparsers.add_parser('recommend', help="Recommend exercises from a reference exercise")
-parser_recommend.add_argument('reference_alias',help="Alias de l'exercice de référence")
+parser_recommend.add_argument('reference_alias',help="Alias of the reference exercise")
 parser_recommend.add_argument("--base-dir",default="~/.trainer",help="Base directory for exercises")
-parser_recommend.add_argument("--top-k",type=int,default=5,help="Nombre de recommandations")
-parser_recommend.add_argument("--include-done",action="store_true",help="Inclure aussi les exercices déjà faits")
-parser_recommend.add_argument("--allow-lower-difficulty",action="store_true",help="Ne pas filtrer les difficultés inférieures")
-parser_recommend.add_argument("--min-common-tags",type=int,default=1,help="Nombre minimum de tags en commun")
+parser_recommend.add_argument("--top-k",type=int,default=5,help="Number of recommendations")
+parser_recommend.add_argument("--include-done",action="store_true",help="Include already completed exercises")
+parser_recommend.add_argument("--allow-lower-difficulty",action="store_true",help="Do not filter lower difficulties")
+parser_recommend.add_argument("--min-common-tags",type=int,default=1,help="Minimum number of common tags")
 
 if __name__ == '__main__':
     args = argParser.parse_args()

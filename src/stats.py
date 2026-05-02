@@ -1,3 +1,8 @@
+"""Exercise statistics display module.
+
+Displays statistics about completed, failed, and attempted exercises from
+the history file with colored output.
+"""
 import os
 import yaml
 from history import HISTORY_FILE
@@ -13,6 +18,14 @@ BOLD    = "\033[1m"
 
 
 def yml(pathFile):
+    """Load YAML file safely.
+    
+    Args:
+        pathFile: Path to the YAML file.
+        
+    Returns:
+        dict: Parsed YAML content, or empty dict on error.
+    """
     try:
         with open(pathFile, "r", encoding="utf-8") as f:
             d = yaml.safe_load(f)
@@ -22,6 +35,14 @@ def yml(pathFile):
 
 
 def show_stats(args):
+    """Display exercise completion statistics.
+    
+    Shows completed, failed, and attempted exercises from the history file
+    with colored status indicators and completion times.
+    
+    Args:
+        args: Command-line arguments containing base_dir.
+    """
     base_dir = os.path.expanduser(args.base_dir if hasattr(args, 'base_dir') else "~/.trainer")
     hist = yml(HISTORY_FILE)
     idx = read_index(base_dir)
@@ -48,7 +69,7 @@ def show_stats(args):
             color = YELLOW
             status_str = f"{YELLOW}{status.upper()}{RESET}"
 
-        # Affichage
+        # Display
         line = f"{BOLD}{alias:<25}{RESET} | {status_str}"
 
         if status == "done" and time:

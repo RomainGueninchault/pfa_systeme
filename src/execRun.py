@@ -1,3 +1,8 @@
+"""Exercise execution environment module.
+
+Creates and manages isolated execution environments for exercises with
+timeout support and interactive shell configuration.
+"""
 import os
 import time
 import yaml
@@ -15,6 +20,14 @@ BLUE    = "\033[34m"
 
 
 def _timeout_seconds(work_dir):
+    """Extract timeout in seconds from exercise configuration.
+    
+    Args:
+        work_dir: The exercise work directory.
+        
+    Returns:
+        int or None: The timeout in seconds, or None if not set.
+    """
     pathYml = os.path.join(work_dir, "config.yml")
     if not os.path.isfile(pathYml):
         return None
@@ -30,6 +43,17 @@ def _timeout_seconds(work_dir):
 
 
 def ExecRun(args):
+    """Execute an exercise in an isolated sandbox environment.
+    
+    Creates a temporary directory, installs the exercise, configures the
+    environment with timing and aliases, then launches an interactive shell.
+    
+    Args:
+        args: Command-line arguments containing exercise name and directories.
+        
+    Returns:
+        bool: True if execution completed, False if an error occurred.
+    """
     work_dir = tempfile.mkdtemp(prefix="trainer_work_")
 
     try:

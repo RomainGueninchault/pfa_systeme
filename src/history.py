@@ -1,3 +1,8 @@
+"""Exercise history tracking module.
+
+Manages persistent storage of exercise completion status, including started,
+failed, and completed exercises with optional completion times.
+"""
 import os
 import yaml
 
@@ -5,6 +10,11 @@ HISTORY_FILE = os.path.expanduser("~/.trainer/history.yml")
 
 
 def _load() -> dict:
+    """Load exercise history from the history file.
+    
+    Returns:
+        dict: The loaded history data, or empty dict if file doesn't exist or on error.
+    """
     if not os.path.isfile(HISTORY_FILE):
         return {}
     try:
@@ -15,18 +25,23 @@ def _load() -> dict:
         return {}
 
 def _save(data: dict):
+    """Save exercise history to the history file.
+    
+    Args:
+        data: Dictionary containing exercise history to save.
+    """
     os.makedirs(os.path.dirname(HISTORY_FILE), exist_ok=True)
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         yaml.safe_dump(data, f, sort_keys=False, allow_unicode=True)
 
 def record_started(alias: str):
-    """Enregistre qu'un exercice a été commencé."""
+    """Record that an exercise has been started."""
     data = _load()
     data[alias] = {"status": "started"}
     _save(data)
 
 def record_done(alias: str, time_str: str | None = None):
-    """Enregistre qu'un exercice a été réussi."""
+    """Record that an exercise has been completed successfully."""
     data = _load()
     entry = {"status": "done"}
     if time_str is not None:
@@ -35,21 +50,21 @@ def record_done(alias: str, time_str: str | None = None):
     _save(data)
 
 def record_failed(alias: str):
-    """Enregistre qu'un exercice a été tenté mais raté."""
+    """Record that an exercise was attempted but failed."""
     data = _load()
-    # on écrase seulement si pas déjà done
+    # only overwrite if not already done
     if data.get(alias, {}).get("status") != "done":
         data[alias] = {"status": "failed"}
     _save(data)
 
 def get_status(alias: str) -> dict | None:
-    """Retourne un dict avec le statut et les infos d'un exercice.
+    """Return a dict with the status and info of an exercise.
     
-    Retour:
-    - None si pas d'historique
-    - {"status": "started"} si commencé
-    - {"status": "failed"} si tenté mais raté
-    - {"status": "done", "time": "time_str"} si réussi (time peut être None)
+    Return:
+    - None if no history
+    - {"status": "started"} if started
+    - {"status": "failed"} if attempted but failed
+    - {"status": "done", "time": "time_str"} if successful (time can be None)
     """
     data = _load()
     entry = data.get(alias)
