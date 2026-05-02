@@ -3,7 +3,7 @@
 Lightweight command-line exercise trainer for managing, running and
 validating programming exercises.
 
-See `EXERCISES.md` for the repository format required by the trainer.
+See `CREATE_EXERCISES.md` for the repository format required by the trainer.
 
 ## Installation
 
