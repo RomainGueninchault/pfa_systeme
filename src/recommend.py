@@ -291,8 +291,8 @@ def print_recommendations(reference_ex, recs):
 
     for i, r in enumerate(recs, start=1):
         diff = format_difficulty(r.get("difficulty"))
-        temps = format_timeout(r.get("timeout"))
-        tags_communs = ", ".join(r["common_tags"]) if r["common_tags"] else "-"
+        time = format_timeout(r.get("timeout"))
+        common_tags = ", ".join(r["common_tags"]) if r["common_tags"] else "-"
         status_label = format_status(r.get("status"))
         desc = r["description"] or "-"
 
@@ -305,8 +305,8 @@ def print_recommendations(reference_ex, recs):
 
         print(f"{BOLD}{i}. {r['alias']}{RESET}")
         print(f"   difficulty  : {diff}")
-        print(f"   common tags : {tags_communs}")
-        print(f"   time        : {temps}")
+        print(f"   common tags : {common_tags}")
+        print(f"   time        : {time}")
         print(f"   status      : {status_text}")
         print(f"   description : {desc}")
         print(f"{DIM}{'-' * 64}{RESET}")

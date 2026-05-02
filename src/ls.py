@@ -212,14 +212,14 @@ def format_row_with_wrapping(name, tags, repo, desc, name_w, tags_w, repo_w, des
     """
     color = get_status_color(status)
     
-    # Tronquer et padder les colonnes fixes
+    # truncate name, tags, repo to their respective widths (without color codes)
     name_part = truncate_string(name, name_w).ljust(name_w)
     tags_part = truncate_string(tags, tags_w).ljust(tags_w)
 
     lines = []
     desc_lines = wrap_description(desc, desc_w)
     
-    # Première ligne avec toutes les colonnes
+    # First line with name, tags, repo and first part of description
     if desc_lines:
         if show_repo:
             repo_part = truncate_string(repo, repo_w).ljust(repo_w)
@@ -231,11 +231,11 @@ def format_row_with_wrapping(name, tags, repo, desc, name_w, tags_w, repo_w, des
 
         lines.append(line)
         
-        # Lignes suivantes pour la description (indentées)
+        # Following lines with description only, aligned with the description column
         for desc_line in desc_lines[1:]:
             lines.append(indent + desc_line)
     else:
-        # Ligne vide
+        # Empty lines
         if show_repo:
             repo_part = truncate_string(repo, repo_w).ljust(repo_w)
             line = color + name_part + RESET + "     " + tags_part + "     " + repo_part
@@ -353,7 +353,7 @@ def rebuild_index(base_dir):
 
     exercises = {}
     for name in sorted(groups):
-        paths = sorted(groups[name])  # ordre stable
+        paths = sorted(groups[name])  # stable order for duplicates
         for i, p in enumerate(paths):
             alias = name if i == 0 else f"{name}_{i}"
             exercises[alias] = p
@@ -441,7 +441,7 @@ def lsRun(args):
     exercises = (idx.get("exercises") if isinstance(idx, dict) else {}) or {}
 
     if not exercises:
-        print(RED + "Index absent/vidé. Lance d'abord: trainer import <url> (qui rebuild l'index)." + RESET)
+        print(RED + "Index missing or empty. Run: trainer import <url> (which rebuilds the index)." + RESET)
         return
 
     tf = (args.tag or "").strip().lower()
@@ -459,7 +459,7 @@ def lsRun(args):
                 continue
             cfg = cfg2
 
-        # Appliquer le filtre par répertoire si spécifié
+        # Apply filters: repo, tags, done
         if repo_filter:
             repo_name = get_repo_name(ex_dir, args.base_dir)
             if repo_name != repo_filter:
@@ -472,16 +472,16 @@ def lsRun(args):
         if tf and tf not in tags_str.lower():
             continue
 
-        # Récupérer le statut de l'exercice en utilisant l'alias
+        # Get exercise status for color coding and optional filtering of done exercises
         ex_status, ex_time = get_exercise_status(alias)
         
-        # Par défaut, ignorer les exercices réussis (sauf si -d activé)
+        # By default, hide done exercises unless --done is specified
         if not show_done and ex_status in ('done_in_time', 'done_overtime'):
             continue
 
         desc = c.get("description") or ""
         
-        # Récupérer le nom du dépôt
+        # Get repository name for display
         repo_name = get_repo_name(ex_dir, args.base_dir)
 
         rows.append((alias, tags_str, desc, ex_status, ex_time, repo_name))
@@ -490,14 +490,14 @@ def lsRun(args):
         print(RED + "No exercises found." + RESET)
         return
     
-    # Déterminer si on affiche la colonne REPO
+    # Determine if we should show the repository column
     show_repo = not repo_filter
 
-    # Obtenir la taille du terminal et calculer les largeurs de colonnes
+    # Get terminal width and calculate column widths accordingly
     terminal_width = shutil.get_terminal_size((80, 24)).columns
     name_w, tags_w, repo_w, desc_w, total_fixed = calculate_column_widths(rows, terminal_width, show_repo=show_repo)
 
-    # Formater le header avec alignement à gauche
+    # Format and print header
     if show_repo:
         header = (GREEN + "NAME".ljust(name_w) + RESET + "     " +
                   BLUE + "TAGS".ljust(tags_w) + RESET + "     " +
