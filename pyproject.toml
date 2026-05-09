@@ -21,6 +21,7 @@ py-modules = [
 	"history",
 	"importBase",
 	"install",
+	"language_select",
 	"ls",
 	"recommend",
 	"stats",

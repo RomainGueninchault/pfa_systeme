@@ -6,7 +6,8 @@ the history file with colored output.
 import os
 import yaml
 from history import HISTORY_FILE
-from ls import read_index
+from ls import read_index, load_merged_config
+from language_select import get_language_filter
 
 RESET   = "\033[0m"
 RED     = "\033[31m"
@@ -38,8 +39,9 @@ def show_stats(args):
     """Display exercise completion statistics.
     
     Shows completed, failed, and attempted exercises from the history file
-    with colored status indicators and completion times.
-    
+    with colored status indicators and completion times. Filters by selected
+    language if one has been selected.
+
     Args:
         args: Command-line arguments containing base_dir.
     """
@@ -47,6 +49,7 @@ def show_stats(args):
     hist = yml(HISTORY_FILE)
     idx = read_index(base_dir)
     exercises = (idx.get("exercises") if isinstance(idx, dict) else {}) or {}
+    language_filter = get_language_filter()
 
     print(f"{BOLD}{CYAN}=== STATISTICS ==={RESET}\n")
 
@@ -55,6 +58,14 @@ def show_stats(args):
 
         if not entry:
             continue
+
+        # Filter by selected language if one is set
+        if language_filter:
+            ex_dir = exercises[alias]
+            c = load_merged_config(ex_dir, base_dir)
+            ex_language = c.get("language")
+            if not ex_language or ex_language.lower() != language_filter:
+                continue
 
         status = entry.get("status")
         time = entry.get("time")

@@ -8,6 +8,7 @@ import os
 import yaml
 import shutil
 from history import get_status
+from language_select import get_language_filter
 
 CFG = ("config.yml", "config.yaml")
 INDEX = ".trainer_index.yml"
@@ -447,6 +448,7 @@ def lsRun(args):
     tf = (args.tag or "").strip().lower()
     show_done = getattr(args, 'done', False)
     repo_filter = (args.repo or "").strip() if hasattr(args, 'repo') else ""
+    language_filter = get_language_filter()
 
     rows = []
 
@@ -459,13 +461,20 @@ def lsRun(args):
                 continue
             cfg = cfg2
 
-        # Apply filters: repo, tags, done
+        # Apply filters: repo, tags, language, done
         if repo_filter:
             repo_name = get_repo_name(ex_dir, args.base_dir)
             if repo_name != repo_filter:
                 continue
 
         c = load_merged_config(ex_dir, args.base_dir)
+
+        # Filter by selected language if one is set
+        if language_filter:
+            ex_language = c.get("language")
+            if not ex_language or ex_language.lower() != language_filter:
+                continue
+
         tags = tags_norm(c.get("tags"))
         tags_str = " ".join(tags)
 

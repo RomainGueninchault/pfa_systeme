@@ -12,6 +12,7 @@ from check import validateExercice
 from timer import start_timer, check_timer_and_report
 from stats import show_stats
 from recommend import recommendRun
+from language_select import selectRun
 
 import os
 import yaml
@@ -46,6 +47,8 @@ def main():
         show_stats(args)
     elif args.cmd == "recommend":
         recommendRun(args)
+    elif args.cmd == "select":
+        selectRun(args)
     else:
         argParser.print_help()
 

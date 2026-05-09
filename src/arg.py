@@ -50,6 +50,9 @@ parser_recommend.add_argument("--include-done",action="store_true",help="Include
 parser_recommend.add_argument("--allow-lower-difficulty",action="store_true",help="Do not filter lower difficulties")
 parser_recommend.add_argument("--min-common-tags",type=int,default=1,help="Minimum number of common tags")
 
+parser_select = subparsers.add_parser('select', help="Select a programming language to filter exercises")
+parser_select.add_argument('language', help="Programming language to select (e.g., python, javascript, C)")
+
 if __name__ == '__main__':
     args = argParser.parse_args()
     print(args)
