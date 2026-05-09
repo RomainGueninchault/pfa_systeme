@@ -19,6 +19,9 @@ parser_install.add_argument("--base-dir", default="~/.trainer", help="Base direc
 parser_install.add_argument('exs', help="name of exercise")
 parser_install.add_argument("--user-dir", default=None, help="User directory for installation")
 
+parser_select = subparsers.add_parser('select', help="Select a programming language to filter exercises")
+parser_select.add_argument('language', help="Programming language to select (e.g., python, javascript, C)")
+
 parser_ls = subparsers.add_parser('ls', help="List exercises in the base directory")
 
 parser_ls.add_argument("--base-dir", default="~/.trainer", help="Base directory where repositories are installed")
@@ -50,8 +53,6 @@ parser_recommend.add_argument("--include-done",action="store_true",help="Include
 parser_recommend.add_argument("--allow-lower-difficulty",action="store_true",help="Do not filter lower difficulties")
 parser_recommend.add_argument("--min-common-tags",type=int,default=1,help="Minimum number of common tags")
 
-parser_select = subparsers.add_parser('select', help="Select a programming language to filter exercises")
-parser_select.add_argument('language', help="Programming language to select (e.g., python, javascript, C)")
 
 if __name__ == '__main__':
     args = argParser.parse_args()
