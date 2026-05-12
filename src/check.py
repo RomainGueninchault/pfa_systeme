@@ -74,15 +74,16 @@ def validateExercice(user_dir=None, base_dir=None):
         print(f"{RED}Variable TRAINER_ALIAS not set{RESET}")
         return False
     
+    test_files = []
     if config and config.get('language') == "javascript":
         index = read_index(base_dir)
-        
+
         exercises = index.get("exercises", {})
-        
+
         if exo_alias not in exercises:
             print(f"{RED}Unknown alias in index{RESET}")
             return False
-        
+
         real_base = exercises[exo_alias]
 
         test_files = config.get("test", [])
@@ -127,6 +128,12 @@ def validateExercice(user_dir=None, base_dir=None):
                 time_str = format_duration(elapsed)
 
         record_done(exo_alias, time_str=time_str)
+
+        for file in test_files:
+            dst = os.path.join(user_dir, file)
+            if os.path.isfile(dst):
+                os.remove(dst)
+
         return True
 
     except subprocess.CalledProcessError:
