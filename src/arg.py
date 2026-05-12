@@ -1,8 +1,3 @@
-"""Command-line argument parser configuration for the trainer application.
-
-Defines argument parsers for all subcommands including import, install, list,
-exec, check, update, stats, and recommend.
-"""
 import argparse
 
 argParser = argparse.ArgumentParser(prog='trainer')
@@ -14,13 +9,10 @@ parser_import=subparsers.add_parser('import',help="add a new repository")
 parser_import.add_argument('url',help="git url of the respository")
 parser_import.add_argument("--base-dir", default="~/.trainer", help="Base directory for import")
 
-parser_install = subparsers.add_parser('install', help="Install an exercise")
+parser_install = subparsers.add_parser('install', help="Install an exercice")
 parser_install.add_argument("--base-dir", default="~/.trainer", help="Base directory for exercises")
-parser_install.add_argument('exs', help="name of exercise")
+parser_install.add_argument('exs', help="name of exercice")
 parser_install.add_argument("--user-dir", default=None, help="User directory for installation")
-
-parser_select = subparsers.add_parser('select', help="Select a programming language to filter exercises")
-parser_select.add_argument('language', help="Programming language to select (e.g., python, javascript, C)")
 
 parser_ls = subparsers.add_parser('ls', help="List exercises in the base directory")
 
@@ -46,14 +38,53 @@ parser_stats = subparsers.add_parser('stats', help="List the exercises that have
 parser_stats.add_argument("--filter", default="", help="Filter the stats by status")
 
 parser_recommend = subparsers.add_parser('recommend', help="Recommend exercises from a reference exercise")
-parser_recommend.add_argument('reference_alias',help="Alias of the reference exercise")
+parser_recommend.add_argument('reference_alias',help="Alias de l'exercice de référence")
 parser_recommend.add_argument("--base-dir",default="~/.trainer",help="Base directory for exercises")
-parser_recommend.add_argument("--top-k",type=int,default=5,help="Number of recommendations")
-parser_recommend.add_argument("--include-done",action="store_true",help="Include already completed exercises")
-parser_recommend.add_argument("--allow-lower-difficulty",action="store_true",help="Do not filter lower difficulties")
-parser_recommend.add_argument("--min-common-tags",type=int,default=1,help="Minimum number of common tags")
+parser_recommend.add_argument("--top-k",type=int,default=5,help="Nombre de recommandations")
+parser_recommend.add_argument("--include-done",action="store_true",help="Inclure aussi les exercices déjà faits")
+parser_recommend.add_argument("--allow-lower-difficulty",action="store_true",help="Ne pas filtrer les difficultés inférieures")
+parser_recommend.add_argument("--min-common-tags",type=int,default=1,help="Nombre minimum de tags en commun")
 
 
-if __name__ == '__main__':
-    args = argParser.parse_args()
-    print(args)
+
+parser_recommend.add_argument("--ai", action="store_true", help="Utiliser la recommandation IA (sentence-transformers) au lieu de Jaccard strict")
+parser_recommend.add_argument("--tag-weight", type=float, default=0.6, help="Poids de la similarité des tags (mode IA)")
+parser_recommend.add_argument("--desc-weight", type=float, default=0.4, help="Poids de la similarité des descriptions (mode IA)")
+parser_recommend.add_argument("--tag-threshold", type=float, default=0.65, help="Seuil cosinus pour considérer deux tags équivalents (mode IA)")
+ 
+# --- Auto-tagging ---
+parser_tag = subparsers.add_parser(
+    "tag-suggest",
+    help="Suggérer automatiquement des tags libres et une difficulté avec un LLM",
+)
+
+parser_tag.add_argument(
+    "alias",
+    nargs="?",
+    default=None,
+    help="Alias de l'exercice. Si omis, traite tous les exercices.",
+)
+
+parser_tag.add_argument(
+    "--base-dir",
+    default="~/.trainer",
+    help="Base directory for exercises",
+)
+
+parser_tag.add_argument(
+    "--repo",
+    default="",
+    help="Ne traiter que les exercices d'un repo donné si alias est omis",
+)
+
+parser_tag.add_argument(
+    "--apply",
+    action="store_true",
+    help="Écrire les tags proposés et difficulty dans config.yml",
+)
+
+parser_tag.add_argument(
+    "--skip-existing",
+    action="store_true",
+    help="Ne pas remplacer les tags ou difficulty déjà présents",
+)

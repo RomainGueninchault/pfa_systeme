@@ -13,6 +13,7 @@ from timer import start_timer, check_timer_and_report
 from stats import show_stats
 from recommend import recommendRun
 from language_select import selectRun
+from tag_suggester import tagSuggestRun
 
 import os
 import yaml
@@ -43,6 +44,8 @@ def main():
         check_timer_and_report(user_dir=os.getcwd(), validation_result=None)
     elif args.cmd == "update":
         pullRun(args)
+    elif args.cmd == "tag-suggest":
+        tagSuggestRun(args)
     elif args.cmd == "stats":
         show_stats(args)
     elif args.cmd == "recommend":
